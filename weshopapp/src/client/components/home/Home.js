@@ -16,6 +16,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import BottomBanner from '../footer/BottomBanner'
 import QuickView from './QuickView'
+import {userImageURL, productImageURL} from '../../Data'
 
 
 
@@ -243,7 +244,7 @@ const LatestProducts = ({latestProduct, showQuickView}) => {
         <div className="latest-p-item">
           <div className="latest-p-img">
             <NavLink to="/detail">
-              <img src={latestProduct.image[0]} alt={latestProduct.product_name} />
+              <img src={productImageURL + latestProduct.image[0]} alt={latestProduct.product_name} />
             </NavLink>
           </div>
           <div className="latest-p-text">
@@ -321,7 +322,7 @@ const FloatItems = ({latestProduct, showQuickView}) => {
         latestProduct.image.length > 1 ? (
         <div className={`float-item-img ${floatImage && 'active'}`}>
           <NavLink to="/detail">
-            <img src={latestProduct.image[1]} alt={latestProduct.product_name}/>
+            <img src={productImageURL + latestProduct.image[1]} alt={latestProduct.product_name}/>
           </NavLink>
         </div>
         ) : null
@@ -400,7 +401,7 @@ const FeaturedProduct = ({featuredProduct, showQuickView}) => {
         <div className="latest-p-item">
           <div className="latest-p-img">
             <NavLink to="/detail">
-              <img src={featuredProduct.image[0]} alt={featuredProduct.product_name} />
+              <img src={productImageURL + featuredProduct.image[0]} alt={featuredProduct.product_name} />
             </NavLink>
           </div>
           <div className="latest-p-text">
@@ -447,7 +448,7 @@ const FeaturedFloatItems = ({featuredProduct, showQuickView}) => {
         featuredProduct.image.length > 1 ? (
         <div className={`float-item-img ${floatImage && 'active'}`}>
           <NavLink to={`/detail?product=${featuredProduct._id}`}>
-            <img src={featuredProduct.image[1]} alt={featuredProduct.product_name}/>
+            <img src={productImageURL + featuredProduct.image[1]} alt={featuredProduct.product_name}/>
           </NavLink>
         </div>
         ) : null

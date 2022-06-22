@@ -1,6 +1,12 @@
 const logo = 'asset/client/logo/logo.png'
 const moneySign = '£'
 
+const userImageURL = 'asset/client/users/profile-image/'
+
+const productImageURL = 'asset/client/products/products/'
+
+const categoryImageURL = 'asset/client/products/categories/'
+
 
 
 
@@ -10,6 +16,9 @@ const moneySign = '£'
 export {
     logo, 
     moneySign,
+    userImageURL,
+    productImageURL,
+    categoryImageURL,
 }
 
 

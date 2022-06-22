@@ -14,8 +14,36 @@ import {
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Axios from 'axios'
+import Moment from 'moment';
+import {userImageURL, productImageURL} from '../../Data'
 
 
+const p_reviews = [
+    {
+        _id: 1,
+        user_id: "1",
+        product_id: "62a9864852a759f59e10d3c4",
+        stars: 3,
+        reviews: "i love this product",
+        created_at: "2022-12-04T00:00:00.000Z",
+    },
+    {
+        _id: 2,
+        user_id: "2",
+        product_id: "62a9864852a759f59e10d3c4",
+        stars: 4,
+        reviews: "i love this product",
+        created_at: "2022-12-04T00:00:00.000Z",
+    },
+    {
+        _id: 3,
+        user_id: "3",
+        product_id: "62a9864852a759f59e10d3c4",
+        stars: 2,
+        reviews: "i love this product",
+        created_at: "2022-12-04T00:00:00.000Z",
+    },
+]
 
 
 
@@ -26,6 +54,7 @@ const Detail = () => {
     const [productDetail, setProductDetail] = useState(null)
     const [description, setDescription] = useState('')
     const [userReviews, setUserReviews] = useState('')
+    const [reviews, setReviews] = useState(p_reviews)
     
     const product_id = searchParams.get('product')
   
@@ -42,7 +71,7 @@ const Detail = () => {
                 productDetail ? (
                     <>
                         <DetailTop productDetail={productDetail}/>
-                        <DetailMiddle/>
+                        <DetailMiddle reviews={reviews}/>
                     </>
                 ) : null
             }
@@ -81,7 +110,7 @@ const ProductImage = ({ images }) => {
     return (
         <div className="product-img">
             <div className="main-product-img">
-                <img src={images[imageIndex]} alt=""/>
+                <img src={productImageURL + images[imageIndex]} alt=""/>
             </div>
             <div className="product-img-view">
                 <div className="preview-frame">
@@ -101,7 +130,7 @@ const ImagePreview = ({image, index, imageIndex, showImage}) => {
 
     return (
         <div onClick={() => showImage(index)} className={`img-preview ${state}`}>
-            <img  src={image} alt={`product-image-${index}`}/>
+            <img  src={productImageURL + image} alt={`product-image-${index}`}/>
         </div>
       );
 }
@@ -213,22 +242,26 @@ const WishListAdd = () => {
 
 
 
-const DetailMiddle = () => {
+const DetailMiddle = ({reviews}) => {
     const [descReviewState, setDescReviewState] = useState('description')
 
     const toogleDescReview = (state) => {
         setDescReviewState(state)
     }
-    
+
     return (
         <div className="description-review">
             <ul className="title-header">
-                <li onClick={() => toogleDescReview('description')} className={`${descReviewState == 'description' ? 'active' : ''}`}><h4>Description</h4></li>
-                <li onClick={() => toogleDescReview('review')} className={`${descReviewState == 'review' ? 'active' : ''}`}><h4>Reviews (0)</h4></li>
+                <li onClick={() => toogleDescReview('description')} className={`${descReviewState == 'description' ? 'active' : ''}`}>
+                    <h4>Description</h4>
+                </li>
+                <li onClick={() => toogleDescReview('review')} className={`${descReviewState == 'review' ? 'active' : ''}`}>
+                    <h4>Reviews ({reviews.length})</h4>
+                </li>
             </ul>
             <div className="desc-reviews-body">
                 {
-                    descReviewState == 'description' ? (<Description/>) : (<Reviews/>)
+                    descReviewState == 'description' ? (<Description/>) : (<Reviews reviews={reviews}/>)
                 }
             </div>
         </div>
@@ -259,25 +292,23 @@ const Description = () => {
 
 
 
-const Reviews = () => {
+const Reviews = ({reviews}) => {
     return (
         <div className="reviews-container">
-        <Row className="show-grid">
-            <Col sm={12} md={12} lg={6}>
-                <div className="user-reviews-body">
-                    <div className="title-header"><h4>Customers review</h4></div>
-                    <UserReviews/>
-                    <UserReviews/>
-                    <UserReviews/>
-                    <UserReviews/>
-                </div>
-            </Col>
-            <Col sm={12} md={12} lg={6}>
-                <ReviewForm/>
-            </Col>
-        </Row>
-            
-            
+            <Row className="show-grid">
+                <Col sm={12} md={12} lg={6}>
+                    <div className="user-reviews-body">
+                        <div className="title-header"><h4>Customers review</h4></div>
+                        {
+                            reviews.map((review, index) => <UserReviews key={index} review={review}/>)
+                        }
+                        
+                    </div>
+                </Col>
+                <Col sm={12} md={12} lg={6}>
+                    <ReviewForm/>
+                </Col>
+            </Row>
         </div>
     )
 }
@@ -290,7 +321,10 @@ const Reviews = () => {
 
 
 
-const UserReviews = () => {
+const UserReviews = ({review}) => {
+    const date = Moment(review.created_at).format('MMM Do YY')
+    const stars = Array(5).fill(0)
+
     return (
         <div className="user-reviews">
             <div className="user-review-img online">
@@ -301,21 +335,17 @@ const UserReviews = () => {
                     <li className="title-header">
                         <h4>Boogie charles</h4>
                         <div className="review-date">
-                            26 march 2022
+                            {date}
                             <FontAwesomeIcon className="review-delete"  icon={faTrashCan} />
                         </div>
                     </li>
                     <li>
-                        <FontAwesomeIcon className="star active"  icon={faStar} />
-                        <FontAwesomeIcon className="star active"  icon={faStar} />
-                        <FontAwesomeIcon className="star active"  icon={faStar} />
-                        <FontAwesomeIcon className="star"  icon={faStar} />
-                        <FontAwesomeIcon className="star"  icon={faStar} />
+                        {
+                            stars.map((star, index) => <FontAwesomeIcon key={index} className={`star ${index < review.stars ? 'active' : ''}`}  icon={faStar} />)
+                        }
                     </li>
                     <li>
-                        <p>quam nihil molestiae consequatur, vel illum qui 
-                            dolorem eum fugiat quo voluptas nulla pariatur
-                        </p>
+                        <p>{review.reviews}</p>
                     </li>
                 </ul>
             </div>
@@ -323,6 +353,11 @@ const UserReviews = () => {
     )
 }
 
+
+
+// const ReviewStars = () => {
+//     return 
+// }
 
 
 
