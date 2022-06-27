@@ -8,12 +8,14 @@ import { NavLink } from 'react-router-dom'
 import Detail from './client/components/detail/Detail'
 import Navigation from './client/components/navigation/Navigation'
 import MiniNavigation from './client/components/navigation/MiniNavigation'
-
+import Axios from 'axios'
+import { current_user } from './client/Data'
 
 
 
 
 function App() {
+  const [user, setUser] = useState(current_user)
   const [appState, setAppState] = useState(false)
   const [sideNavi, setSideNavi] = useState(false)
   const [mobileSearch, setMobileSearch] = useState(false)
@@ -34,8 +36,21 @@ function App() {
   }
 
 
+   
+  useEffect(() => {
+    userAppState(user)
+  }, [])
 
 
+  // change user app theme on page load
+  const userAppState = (user) => {
+    if(user.theme == 'light'){
+      setAppState(false)
+    }
+    if(user.theme == 'dark'){
+      setAppState(true)
+    }
+  }
 
 
   return (

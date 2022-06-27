@@ -243,7 +243,7 @@ const LatestProducts = ({latestProduct, showQuickView}) => {
       <div className="latest-p-container">
         <div className="latest-p-item">
           <div className="latest-p-img">
-            <NavLink to="/detail">
+          <NavLink to={`/detail?product=${latestProduct._id}`}>
               <img src={productImageURL + latestProduct.image[0]} alt={latestProduct.product_name} />
             </NavLink>
           </div>
@@ -321,7 +321,7 @@ const FloatItems = ({latestProduct, showQuickView}) => {
       {
         latestProduct.image.length > 1 ? (
         <div className={`float-item-img ${floatImage && 'active'}`}>
-          <NavLink to="/detail">
+         <NavLink to={`/detail?product=${latestProduct._id}`}>
             <img src={productImageURL + latestProduct.image[1]} alt={latestProduct.product_name}/>
           </NavLink>
         </div>
@@ -400,7 +400,7 @@ const FeaturedProduct = ({featuredProduct, showQuickView}) => {
       <div className="latest-p-container">
         <div className="latest-p-item">
           <div className="latest-p-img">
-            <NavLink to="/detail">
+            <NavLink to={`/detail?product=${featuredProduct._id}`}>
               <img src={productImageURL + featuredProduct.image[0]} alt={featuredProduct.product_name} />
             </NavLink>
           </div>

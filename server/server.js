@@ -3,7 +3,9 @@ const mongoose = require('mongoose')
 const app = express()
 const PORT = 3001
 const cors = require('cors')
+const USER_MODEL = require('./models/users')
 const PRODUCT_MODEL = require('./models/products')
+const PRODUCT_REVIEW_MODEL = require('./models/reviews')
 
 app.use(express.json())
 app.use(cors())
@@ -58,6 +60,35 @@ app.get('/detail', async (request, response) => {
         return response.send(result)
     })
 })
+
+
+
+// fetch product reviews
+app.get('/reviews', async (request, response) => {
+    let product_id = request.query.product_id
+    PRODUCT_REVIEW_MODEL.find({ product_id: product_id}, (error, result) => {
+        if(error){
+            return response.send(error)
+        }
+        return response.send(result)
+    })
+})
+
+
+
+// fetch loggedin user
+app.get('/user', async (request, response) => {
+    const email = "anonyecharles@gmail.com"
+    const password = "111111"
+    USER_MODEL.findOne({email: email, password: password }, (error, result) => {
+        if(error){
+            return response.send(error)
+        }
+        return response.send(result)
+    })
+})
+
+
 
 
 app.listen(PORT, () => {

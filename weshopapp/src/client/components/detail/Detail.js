@@ -15,35 +15,35 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Axios from 'axios'
 import Moment from 'moment';
-import {userImageURL, productImageURL} from '../../Data'
+import { moneySign, userImageURL, productImageURL } from '../../Data'
 
 
-const p_reviews = [
-    {
-        _id: 1,
-        user_id: "1",
-        product_id: "62a9864852a759f59e10d3c4",
-        stars: 3,
-        reviews: "i love this product",
-        created_at: "2022-12-04T00:00:00.000Z",
-    },
-    {
-        _id: 2,
-        user_id: "2",
-        product_id: "62a9864852a759f59e10d3c4",
-        stars: 4,
-        reviews: "i love this product",
-        created_at: "2022-12-04T00:00:00.000Z",
-    },
-    {
-        _id: 3,
-        user_id: "3",
-        product_id: "62a9864852a759f59e10d3c4",
-        stars: 2,
-        reviews: "i love this product",
-        created_at: "2022-12-04T00:00:00.000Z",
-    },
-]
+// const p_reviews = [
+//     {
+//         _id: 1,
+//         user_id: "1",
+//         product_id: "62a9864852a759f59e10d3c4",
+//         stars: 3,
+//         reviews: "i love this product",
+//         created_at: "2022-12-04T00:00:00.000Z",
+//     },
+//     {
+//         _id: 2,
+//         user_id: "2",
+//         product_id: "62a9864852a759f59e10d3c4",
+//         stars: 4,
+//         reviews: "i love this product",
+//         created_at: "2022-12-04T00:00:00.000Z",
+//     },
+//     {
+//         _id: 3,
+//         user_id: "3",
+//         product_id: "62a9864852a759f59e10d3c4",
+//         stars: 2,
+//         reviews: "i love this product",
+//         created_at: "2022-12-04T00:00:00.000Z",
+//     },
+// ]
 
 
 
@@ -54,14 +54,23 @@ const Detail = () => {
     const [productDetail, setProductDetail] = useState(null)
     const [description, setDescription] = useState('')
     const [userReviews, setUserReviews] = useState('')
-    const [reviews, setReviews] = useState(p_reviews)
+    const [reviews, setReviews] = useState([])
+
+    const [stars, setStars] = useState('')
+    const [title, setTitle] = useState('')
+    const [productReviews, setProductReviews] = useState('')
     
     const product_id = searchParams.get('product')
-  
+   
     useEffect(() => {
         // fetch product detail
         Axios.get('http://localhost:3001/detail?product=' + product_id).then((response) => {
             setProductDetail(response.data)
+        })
+
+        // fetch product reviews
+        Axios.get('http://localhost:3001/reviews?product_id=' + product_id).then((response) => {
+            setReviews(response.data)
         })
     }, [])
 
@@ -70,8 +79,12 @@ const Detail = () => {
            {
                 productDetail ? (
                     <>
-                        <DetailTop productDetail={productDetail}/>
-                        <DetailMiddle reviews={reviews}/>
+                        <DetailTop reviews={reviews} productDetail={productDetail}/>
+                        <DetailMiddle 
+                            reviews={reviews} stars={stars} productReviews={productReviews}
+                            reviews={reviews} setProductReviews={setProductReviews} 
+                            title={title} setTitle={setTitle} setStars={setStars} 
+                        />
                     </>
                 ) : null
             }
@@ -85,12 +98,12 @@ export default Detail
 
 
 
-const DetailTop = ({productDetail}) => {
+const DetailTop = ({ reviews, productDetail }) => {
     return (
         <div className="detail-img-container">
             <div className="inner-detail-img">
                 <ProductImage images={productDetail.image}/>
-                <ProductDetail/>
+                <ProductDetail reviews={reviews} productDetail={productDetail}/>
             </div>
         </div>
     )
@@ -154,17 +167,17 @@ const DirectionButton = () => {
 
 
 
-const ProductDetail = () => {
+const ProductDetail = ({ reviews, productDetail }) => {
     return (
         <div className="product-detail">
-           <div className="title-header"><h3>Metro Double Layer HP Mouse</h3></div>
+           <div className="title-header"><h3>{productDetail.product_name}</h3></div>
             <div className="detail-reviews">
                 <ul className="ul-detail-top">
-                    <li><ProductStars/></li>
-                    <li>(5) reviews</li>
+                    <li><ProductStars reviews={reviews}/></li>
+                    <li>({reviews.length}) reviews</li>
                     <li className="li-link"><FontAwesomeIcon className="icon-pen"  icon={faPen} />Write a review</li>
                 </ul>
-                <ItemDetail/>
+                <ItemDetail productDetail={productDetail}/>
                 <ProductQuantity/>
                 <WishListAdd/>
             </div>
@@ -177,7 +190,7 @@ const ProductDetail = () => {
 
 
 
-const ProductStars = () => {
+const ProductStars = ({reviews}) => {
     return (
         <div className="review-stars">
             <FontAwesomeIcon className="star active"  icon={faStar} />
@@ -193,14 +206,15 @@ const ProductStars = () => {
 
 
 
-const ItemDetail = () => {
+const ItemDetail = ({productDetail}) => {
+    const quantity = productDetail.quantity > 0 ? true : false
     return (
         <ul className="ul-detail-middle">
-            <li><b>Price:</b> £8.00</li>
-            <li><b>Old Price:</b> £8.00</li>
-            <li><b>Brand: </b>Mac Os</li>
-            <li><b>Product Code: </b>Product 25</li>
-            <li><b>Availability: </b><span className="active">Out of stock</span></li>
+            <li><b>Price:</b> {moneySign + productDetail.price}</li>
+            <li><b>Old Price:</b> {moneySign + productDetail.old_price}</li>
+            <li><b>Brand: </b>{productDetail.brand}</li>
+            <li><b>Product Code: </b>Product {productDetail.product_code}</li>
+            <li><b>Availability: </b><span className={` ${!quantity && 'active'}`}>{quantity ? 'Available' : 'Out of stock'}</span></li>
         </ul>
     )
 }
@@ -242,7 +256,7 @@ const WishListAdd = () => {
 
 
 
-const DetailMiddle = ({reviews}) => {
+const DetailMiddle = ({reviews, setProductReviews, title, setTitle, setStars, stars, productReviews}) => {
     const [descReviewState, setDescReviewState] = useState('description')
 
     const toogleDescReview = (state) => {
@@ -261,7 +275,11 @@ const DetailMiddle = ({reviews}) => {
             </ul>
             <div className="desc-reviews-body">
                 {
-                    descReviewState == 'description' ? (<Description/>) : (<Reviews reviews={reviews}/>)
+                    descReviewState == 'description' ? (<Description/>) : (
+                    <Reviews 
+                        reviews={reviews} setProductReviews={setProductReviews} 
+                        title={title} setTitle={setTitle} setStars={setStars} stars={stars} productReviews={productReviews}
+                    />)
                 }
             </div>
         </div>
@@ -292,21 +310,28 @@ const Description = () => {
 
 
 
-const Reviews = ({reviews}) => {
+const Reviews = ({reviews, setProductReviews, title, setTitle, setStars, stars, productReviews}) => {
     return (
         <div className="reviews-container">
             <Row className="show-grid">
-                <Col sm={12} md={12} lg={6}>
+                <Col sm={12} md={12} lg={reviews.length > 0 ? '6' : '12'}>
                     <div className="user-reviews-body">
-                        <div className="title-header"><h4>Customers review</h4></div>
+                        { 
+                            reviews.length > 0 ? (<div className="title-header"><h4>Customers review</h4></div>) : ''
+                        }
+                        
                         {
                             reviews.map((review, index) => <UserReviews key={index} review={review}/>)
                         }
                         
                     </div>
                 </Col>
-                <Col sm={12} md={12} lg={6}>
-                    <ReviewForm/>
+                <Col sm={12} md={12} lg={reviews.length > 0 ? '6' : '12'}>
+                    <ReviewForm 
+                        setProductReviews={setProductReviews} 
+                        title={title} setTitle={setTitle} 
+                        setStars={setStars} stars={stars} productReviews={productReviews}
+                    />
                 </Col>
             </Row>
         </div>
@@ -362,7 +387,18 @@ const UserReviews = ({review}) => {
 
 
 
-const ReviewForm = () => {
+const ReviewForm = ({setProductReviews, title, setTitle, setStars, stars, productReviews}) => {
+    const formStars = Array(5).fill(0)
+    const [activeStars, setActiveStars] = useState()
+
+    const animateStar = (action) => {
+        setActiveStars(action.index)
+        if(action.state == 'click'){
+            console.log(action)
+        }
+        console.log(action)
+    }
+   
     return (
         <div className="review-form">
             <div className="title-header"><h4>Wrire a review</h4></div>
@@ -371,19 +407,19 @@ const ReviewForm = () => {
                     <div className="star-title-header">
                         <h4>How would you rate thing item?</h4>
                     </div>
-                    <FontAwesomeIcon className="star"  icon={faStar} />
-                    <FontAwesomeIcon className="star"  icon={faStar} />
-                    <FontAwesomeIcon className="star"  icon={faStar} />
-                    <FontAwesomeIcon className="star"  icon={faStar} />
-                    <FontAwesomeIcon className="star"  icon={faStar} />
+                    <div  className="form-star-container">
+                    {
+                        formStars.map((star, index) => (<FontAwesomeIcon onClick={() => animateStar({index: index, state: 'click'})} onMouseEnter={() => animateStar({index: index, state: 'hover'})} key={index} className={`star  ${index <= activeStars ? 'active' : ''}`}  icon={faStar} />))
+                    }
+                    </div>
                 </div>
                 <div className="form-group">
                     <label htmlFor="title">Title: <span>*</span></label>
-                    <input type="text" className="form-control"/>
+                    <input type="text" className="form-control" value={title} onChange={(e) => setTitle(e.target.value)}/>
                 </div>
                 <div className="form-group">
                     <label htmlFor="title">Review: <span>*</span></label>
-                    <textarea rows="4" cols="50" className="form-control"></textarea>
+                    <textarea rows="4" cols="50" className="form-control" onChange={(e) => setProductReviews(e.target.value)}></textarea>
                 </div>
                 <div className="form-button">
                     <button type="submit">SUBMIT REVIEW</button>

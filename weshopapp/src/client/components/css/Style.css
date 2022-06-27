@@ -1881,6 +1881,9 @@ a{
     padding: 20px 0px;
     text-align: center;
 }
+.form-star-container{
+    display: inline-block;
+}
 .review-form-body .form-stars .star{
     cursor: pointer;
 }
