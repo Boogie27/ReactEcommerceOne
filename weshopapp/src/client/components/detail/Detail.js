@@ -389,15 +389,19 @@ const UserReviews = ({review}) => {
 
 const ReviewForm = ({setProductReviews, title, setTitle, setStars, stars, productReviews}) => {
     const formStars = Array(5).fill(0)
+    const [isClicked, setIsClicked] = useState(false)
     const [activeStars, setActiveStars] = useState()
 
     const animateStar = (action) => {
         setActiveStars(action.index)
-        if(action.state == 'click'){
-            console.log(action)
+        if(action == false && isClicked){
+            setActiveStars(isClicked.index)
+        }else{
+            setIsClicked(false)
         }
-        console.log(action)
     }
+
+
    
     return (
         <div className="review-form">
@@ -407,9 +411,9 @@ const ReviewForm = ({setProductReviews, title, setTitle, setStars, stars, produc
                     <div className="star-title-header">
                         <h4>How would you rate thing item?</h4>
                     </div>
-                    <div  className="form-star-container">
+                    <div   onMouseLeave={() => animateStar(false)} className="form-star-container">
                     {
-                        formStars.map((star, index) => (<FontAwesomeIcon onClick={() => animateStar({index: index, state: 'click'})} onMouseEnter={() => animateStar({index: index, state: 'hover'})} key={index} className={`star  ${index <= activeStars ? 'active' : ''}`}  icon={faStar} />))
+                        formStars.map((star, index) => (<FontAwesomeIcon onClick={() => setIsClicked({index: index, state: 'click'})} onMouseEnter={() => animateStar({index: index, state: 'hover'})} key={index} className={`star  ${index <= activeStars ? 'active' : ''}`}  icon={faStar} />))
                     }
                     </div>
                 </div>

@@ -1887,6 +1887,9 @@ a{
 .review-form-body .form-stars .star{
     cursor: pointer;
 }
+.review-form-body .form-stars .star:hover{
+    color: rgb(224, 157, 32);
+}
 .review-form-body .form-stars .star-title-header h4{
     font-size: 13px;
 }
