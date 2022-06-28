@@ -15,7 +15,7 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Axios from 'axios'
 import Moment from 'moment';
-import { moneySign, userImageURL, productImageURL } from '../../Data'
+import { current_user, moneySign, userImageURL, productImageURL } from '../../Data'
 
 
 // const p_reviews = [
@@ -56,7 +56,8 @@ const Detail = () => {
     const [userReviews, setUserReviews] = useState('')
     const [reviews, setReviews] = useState([])
 
-    const [stars, setStars] = useState('')
+    const [isSubmit, setIsSubmit] = useState(false)
+    const [stars, setStars] = useState(0)
     const [title, setTitle] = useState('')
     const [productReviews, setProductReviews] = useState('')
     
@@ -74,6 +75,17 @@ const Detail = () => {
         })
     }, [])
 
+    const submitReview = () => {
+        setIsSubmit(true)
+        Axios.post('http://localhost:3001/submit-review', {
+            user_id: current_user._id,
+            product_id: product_id,
+            stars: stars,
+            reviews: productReviews,
+            created_at: '',
+        })
+    }
+
     return (
         <div className="product-detail-container">
            {
@@ -82,8 +94,8 @@ const Detail = () => {
                         <DetailTop reviews={reviews} productDetail={productDetail}/>
                         <DetailMiddle 
                             reviews={reviews} stars={stars} productReviews={productReviews}
-                            reviews={reviews} setProductReviews={setProductReviews} 
-                            title={title} setTitle={setTitle} setStars={setStars} 
+                            reviews={reviews} setProductReviews={setProductReviews} isSubmit={isSubmit}
+                            title={title} setTitle={setTitle} setStars={setStars} submitReview={submitReview}
                         />
                     </>
                 ) : null
@@ -256,7 +268,7 @@ const WishListAdd = () => {
 
 
 
-const DetailMiddle = ({reviews, setProductReviews, title, setTitle, setStars, stars, productReviews}) => {
+const DetailMiddle = ({reviews, isSubmit, setProductReviews, title, setTitle, setStars, stars, productReviews, submitReview}) => {
     const [descReviewState, setDescReviewState] = useState('description')
 
     const toogleDescReview = (state) => {
@@ -277,8 +289,9 @@ const DetailMiddle = ({reviews, setProductReviews, title, setTitle, setStars, st
                 {
                     descReviewState == 'description' ? (<Description/>) : (
                     <Reviews 
-                        reviews={reviews} setProductReviews={setProductReviews} 
+                        reviews={reviews} setProductReviews={setProductReviews} submitReview={submitReview}
                         title={title} setTitle={setTitle} setStars={setStars} stars={stars} productReviews={productReviews}
+                        isSubmit={isSubmit}
                     />)
                 }
             </div>
@@ -310,7 +323,7 @@ const Description = () => {
 
 
 
-const Reviews = ({reviews, setProductReviews, title, setTitle, setStars, stars, productReviews}) => {
+const Reviews = ({reviews, setProductReviews, isSubmit, title, setTitle, setStars, stars, productReviews, submitReview}) => {
     return (
         <div className="reviews-container">
             <Row className="show-grid">
@@ -328,8 +341,8 @@ const Reviews = ({reviews, setProductReviews, title, setTitle, setStars, stars, 
                 </Col>
                 <Col sm={12} md={12} lg={reviews.length > 0 ? '6' : '12'}>
                     <ReviewForm 
-                        setProductReviews={setProductReviews} 
-                        title={title} setTitle={setTitle} 
+                        setProductReviews={setProductReviews} isSubmit={isSubmit}
+                        title={title} setTitle={setTitle} submitReview={submitReview} 
                         setStars={setStars} stars={stars} productReviews={productReviews}
                     />
                 </Col>
@@ -369,7 +382,8 @@ const UserReviews = ({review}) => {
                             stars.map((star, index) => <FontAwesomeIcon key={index} className={`star ${index < review.stars ? 'active' : ''}`}  icon={faStar} />)
                         }
                     </li>
-                    <li>
+                    <li className="review-review">
+                        <h4>{review.title}</h4>
                         <p>{review.reviews}</p>
                     </li>
                 </ul>
@@ -380,25 +394,30 @@ const UserReviews = ({review}) => {
 
 
 
-// const ReviewStars = () => {
-//     return 
-// }
 
 
 
-
-const ReviewForm = ({setProductReviews, title, setTitle, setStars, stars, productReviews}) => {
+const ReviewForm = ({setProductReviews, isSubmit, title, setTitle, setStars, stars, productReviews, submitReview}) => {
     const formStars = Array(5).fill(0)
     const [isClicked, setIsClicked] = useState(false)
     const [activeStars, setActiveStars] = useState()
 
     const animateStar = (action) => {
         setActiveStars(action.index)
+        setStars(activeStars + 1)
+
         if(action == false && isClicked){
+            setStars(isClicked.index + 1)
             setActiveStars(isClicked.index)
         }else{
             setIsClicked(false)
+            setStars(action.index + 1)
         }
+       
+        if(!isClicked && action == false && stars > 0){
+            setStars(0)
+        }
+        
     }
 
 
@@ -416,6 +435,7 @@ const ReviewForm = ({setProductReviews, title, setTitle, setStars, stars, produc
                         formStars.map((star, index) => (<FontAwesomeIcon onClick={() => setIsClicked({index: index, state: 'click'})} onMouseEnter={() => animateStar({index: index, state: 'hover'})} key={index} className={`star  ${index <= activeStars ? 'active' : ''}`}  icon={faStar} />))
                     }
                     </div>
+                    <div className="star-count">({stars})</div>
                 </div>
                 <div className="form-group">
                     <label htmlFor="title">Title: <span>*</span></label>
@@ -426,7 +446,7 @@ const ReviewForm = ({setProductReviews, title, setTitle, setStars, stars, produc
                     <textarea rows="4" cols="50" className="form-control" onChange={(e) => setProductReviews(e.target.value)}></textarea>
                 </div>
                 <div className="form-button">
-                    <button type="submit">SUBMIT REVIEW</button>
+                    <button onClick={() => submitReview()} type="submit">{ isSubmit ? 'Please wait...' : 'SUBMIT REVIEW'}</button>
                 </div>
             </div>
         </div>

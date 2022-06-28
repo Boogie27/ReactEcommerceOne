@@ -1885,6 +1885,7 @@ a{
     display: inline-block;
 }
 .review-form-body .form-stars .star{
+    font-size: 22px;
     cursor: pointer;
 }
 .review-form-body .form-stars .star:hover{
@@ -1892,6 +1893,14 @@ a{
 }
 .review-form-body .form-stars .star-title-header h4{
     font-size: 13px;
+    margin: 5px 0px;
+}
+span.css-1xdhyk6 span{
+    font-size: 10px;
+}
+.review-form-body .form-stars .star-count{
+    font-size: 13px;
+    font-weight: 600;
 }
 .review-form-body .form-group{
     margin: 20px 0px;
@@ -1929,6 +1938,11 @@ a{
     border-radius: 3px;
     transition: all 0.2s ease;
     background-color: rgb(224, 157, 32);
+}
+.user-reviews-p ul li.review-review h4{
+    color: rgb(114, 114, 114);
+    font-size: 14px;
+    font-weight: 600;
 }
 .review-form-body button:hover{
     background-color: rgb(184, 125, 15);

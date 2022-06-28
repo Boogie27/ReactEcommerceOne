@@ -11,7 +11,7 @@ const reviewsSchema  = new mongoose.Schema({
         type: String,
         required: true
     },
-    starts: {
+    stars: {
         type: Number,
         required: true
     },
