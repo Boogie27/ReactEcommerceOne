@@ -15,35 +15,17 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Axios from 'axios'
 import Moment from 'moment';
-import { current_user, moneySign, userImageURL, productImageURL } from '../../Data'
+import { 
+    url, 
+    today,
+    moneySign, 
+    userImageURL, 
+    current_user, 
+    productImageURL 
+} from '../../Data'
+import AlertDanger from '../alerts/AlertDanger'
 
 
-// const p_reviews = [
-//     {
-//         _id: 1,
-//         user_id: "1",
-//         product_id: "62a9864852a759f59e10d3c4",
-//         stars: 3,
-//         reviews: "i love this product",
-//         created_at: "2022-12-04T00:00:00.000Z",
-//     },
-//     {
-//         _id: 2,
-//         user_id: "2",
-//         product_id: "62a9864852a759f59e10d3c4",
-//         stars: 4,
-//         reviews: "i love this product",
-//         created_at: "2022-12-04T00:00:00.000Z",
-//     },
-//     {
-//         _id: 3,
-//         user_id: "3",
-//         product_id: "62a9864852a759f59e10d3c4",
-//         stars: 2,
-//         reviews: "i love this product",
-//         created_at: "2022-12-04T00:00:00.000Z",
-//     },
-// ]
 
 
 
@@ -57,6 +39,9 @@ const Detail = () => {
     const [reviews, setReviews] = useState([])
 
     const [isSubmit, setIsSubmit] = useState(false)
+    const [starsAlert, setStarsAlert] = useState('')
+    const [titleAlert, setTitleAlert] = useState('')
+    const [reviewsAlert, setReviewsAlert] = useState('')
     const [stars, setStars] = useState(0)
     const [title, setTitle] = useState('')
     const [productReviews, setProductReviews] = useState('')
@@ -65,26 +50,51 @@ const Detail = () => {
    
     useEffect(() => {
         // fetch product detail
-        Axios.get('http://localhost:3001/detail?product=' + product_id).then((response) => {
-            setProductDetail(response.data)
-        })
+        fetchProductDetail(product_id)
 
         // fetch product reviews
-        Axios.get('http://localhost:3001/reviews?product_id=' + product_id).then((response) => {
+        fetchProductReviews(product_id)
+    }, [])
+
+    
+    const fetchProductDetail = (product_id) => {
+        Axios.get(url(`/detail?product=${product_id}`)).then((response) => {
+            setProductDetail(response.data)
+        })
+    }
+
+    const fetchProductReviews = (product_id) => {
+        Axios.get(url(`/reviews?product_id=${product_id}`)).then((response) => {
             setReviews(response.data)
         })
-    }, [])
+    }
 
     const submitReview = () => {
         setIsSubmit(true)
-        Axios.post('http://localhost:3001/submit-review', {
-            user_id: current_user._id,
-            product_id: product_id,
-            stars: stars,
-            reviews: productReviews,
-            created_at: '',
-        })
+        setStarsAlert('')
+        setTitleAlert('')
+        setReviewsAlert('')
+
+        if(title == ''){
+            setTitleAlert('Title field is required!')
+        }
+        if(stars == 0){
+            setStarsAlert('Select stars rating')
+            console.log(starsAlert)
+        }
+         console.log(stars)
+        // Axios.post(url('/submit-review'), {
+        //     user_id: current_user._id,
+        //     product_id: product_id,
+        //     stars: stars,
+        //     title: title,
+        //     reviews: productReviews,
+        //     created_at: today,
+        // })
     }
+    
+
+
 
     return (
         <div className="product-detail-container">
@@ -96,6 +106,7 @@ const Detail = () => {
                             reviews={reviews} stars={stars} productReviews={productReviews}
                             reviews={reviews} setProductReviews={setProductReviews} isSubmit={isSubmit}
                             title={title} setTitle={setTitle} setStars={setStars} submitReview={submitReview}
+                            starsAlert={starsAlert}
                         />
                     </>
                 ) : null
@@ -268,7 +279,7 @@ const WishListAdd = () => {
 
 
 
-const DetailMiddle = ({reviews, isSubmit, setProductReviews, title, setTitle, setStars, stars, productReviews, submitReview}) => {
+const DetailMiddle = ({reviews, isSubmit, starsAlert, setProductReviews, title, setTitle, setStars, stars, productReviews, submitReview}) => {
     const [descReviewState, setDescReviewState] = useState('description')
 
     const toogleDescReview = (state) => {
@@ -291,7 +302,7 @@ const DetailMiddle = ({reviews, isSubmit, setProductReviews, title, setTitle, se
                     <Reviews 
                         reviews={reviews} setProductReviews={setProductReviews} submitReview={submitReview}
                         title={title} setTitle={setTitle} setStars={setStars} stars={stars} productReviews={productReviews}
-                        isSubmit={isSubmit}
+                        isSubmit={isSubmit} starsAlert={starsAlert}
                     />)
                 }
             </div>
@@ -323,7 +334,7 @@ const Description = () => {
 
 
 
-const Reviews = ({reviews, setProductReviews, isSubmit, title, setTitle, setStars, stars, productReviews, submitReview}) => {
+const Reviews = ({reviews, starsAlert, setProductReviews, isSubmit, title, setTitle, setStars, stars, productReviews, submitReview}) => {
     return (
         <div className="reviews-container">
             <Row className="show-grid">
@@ -344,6 +355,7 @@ const Reviews = ({reviews, setProductReviews, isSubmit, title, setTitle, setStar
                         setProductReviews={setProductReviews} isSubmit={isSubmit}
                         title={title} setTitle={setTitle} submitReview={submitReview} 
                         setStars={setStars} stars={stars} productReviews={productReviews}
+                        starsAlert={starsAlert}
                     />
                 </Col>
             </Row>
@@ -397,7 +409,11 @@ const UserReviews = ({review}) => {
 
 
 
-const ReviewForm = ({setProductReviews, isSubmit, title, setTitle, setStars, stars, productReviews, submitReview}) => {
+const ReviewForm = ({
+        setProductReviews, isSubmit, title, setTitle, 
+        setStars, stars, productReviews, submitReview,
+        starsAlert,
+    }) => {
     const formStars = Array(5).fill(0)
     const [isClicked, setIsClicked] = useState(false)
     const [activeStars, setActiveStars] = useState()
@@ -428,6 +444,9 @@ const ReviewForm = ({setProductReviews, isSubmit, title, setTitle, setStars, sta
             <div className="review-form-body">
                 <div className="form-stars">
                     <div className="star-title-header">
+                        {
+                            starsAlert && (<AlertDanger alert="alert failed!"/>) 
+                        }
                         <h4>How would you rate thing item?</h4>
                     </div>
                     <div   onMouseLeave={() => animateStar(false)} className="form-star-container">

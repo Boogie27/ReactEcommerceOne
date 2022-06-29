@@ -16,7 +16,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import BottomBanner from '../footer/BottomBanner'
 import QuickView from './QuickView'
-import {userImageURL, productImageURL} from '../../Data'
+import { url, userImageURL, productImageURL} from '../../Data'
 
 
 
@@ -142,12 +142,12 @@ const Home = ({appState}) => {
 
   useEffect(() => {
     // fetch latest products
-    Axios.get('http://localhost:3001/latest-product').then((response) => {
+    Axios.get(url(`/latest-product`)).then((response) => {
       setLatestProducts(response.data)
     })
 
     // fetch featured products
-    Axios.get('http://localhost:3001/featured-product').then((response) => {
+    Axios.get(url(`/featured-product`)).then((response) => {
       setFeaturedProducts(response.data)
     })
 

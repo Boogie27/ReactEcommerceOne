@@ -37,7 +37,22 @@ a{
 .title-header h4{
     margin: 0px;
 }
-
+.alert-bg-danger{
+    font-size: 13px;
+    padding: 5px 0px;
+    border-radius: 3px;
+    color: rgb(190, 8, 8);
+    background-color: rgb(255, 174, 174);
+    border: 1px solid rgb(250, 151, 151);
+}
+.alert-bg-success{
+    color: green;    
+    font-size: 13px;
+    padding: 5px 0px;
+    border-radius: 3px;
+    background-color: rgb(189, 255, 189);
+    border: 1px solid rgb(130, 245, 130);
+}
 
 .parent-container{
     background-color: #fff;
@@ -1890,6 +1905,9 @@ a{
 }
 .review-form-body .form-stars .star:hover{
     color: rgb(224, 157, 32);
+}
+.review-form-body .form-stars .star-title-header{
+    padding: 0px 10px;
 }
 .review-form-body .form-stars .star-title-header h4{
     font-size: 13px;

@@ -92,7 +92,11 @@ app.get('/user', async (request, response) => {
 
 
 // submit reviews 
-// app.post()
+app.post('/submit-review', async (request, response) => {
+    const user_id = request.body
+
+    console.log(user_id)
+})
 
 
 

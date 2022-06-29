@@ -1,3 +1,5 @@
+
+
 const logo = 'asset/client/logo/logo.png'
 
 const moneySign = '£'
@@ -25,9 +27,30 @@ const current_user = {
     }
 
 
+const url = (string) => {
+    return 'http://localhost:3001' + string
+}
+
+
+const money = (money) => {
+    return '£' + money
+}
+
+
+const today = () => {
+    let today = new Date().toISOString()
+    return today
+}
+
+
+
+
 
 export {
+    url,
     logo, 
+    money,
+    today,
     moneySign,
     current_user,
     userImageURL,
