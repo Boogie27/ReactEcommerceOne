@@ -64,10 +64,16 @@ const Detail = () => {
     }
 
     const fetchProductReviews = (product_id) => {
-        Axios.get(url(`/reviews?product_id=${product_id}`)).then((response) => {
+        // Axios.get(url(`/reviews?product_id=${product_id}`)).then((response) => {
+        //     setReviews(response.data)
+        // })
+
+        Axios.get(url(`/product-reviews?product_id=${product_id}`)).then((response) => {
             setReviews(response.data)
         })
     }
+
+
 
     const submitReview = () => {
         setIsSubmit(true)
@@ -445,7 +451,7 @@ const ReviewForm = ({
                 <div className="form-stars">
                     <div className="star-title-header">
                         {
-                            starsAlert && (<AlertDanger alert="alert failed!"/>) 
+                            starsAlert && (<AlertDanger alert="Select stars!"/>) 
                         }
                         <h4>How would you rate thing item?</h4>
                     </div>

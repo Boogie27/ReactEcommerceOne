@@ -76,6 +76,60 @@ app.get('/reviews', async (request, response) => {
 
 
 
+app.get('/product-reviews', async (request, response) => {
+    let product_id = request.query.product_id
+    PRODUCT_REVIEW_MODEL.aggregate([
+        { $lookup:
+           {
+                from: 'users',
+                localField: 'user_id',
+                foreignField: '_id',
+                as: 'user_reviews'
+           }
+         }
+        ], (error, result) => {
+            if(error){
+                return response.send(error)
+            }
+            return response.send(result)
+        })
+});
+
+
+
+// MongoClient.connect(url, function(err, db) {
+//     if (err) throw err;
+//     var dbo = db.db("mydb");
+//     dbo.collection('orders').aggregate([
+//       { $lookup:
+//          {
+//            from: 'products',
+//            localField: 'product_id',
+//            foreignField: '_id',
+//            as: 'orderdetails'
+//          }
+//        }
+//       ]).toArray(function(err, res) {
+//       if (err) throw err;
+//       console.log(JSON.stringify(res));
+//       db.close();
+//     });
+//   });
+
+
+
+// MongoClient.connect(url, function(err, db) {
+//     if (err) throw err;
+//     var dbo = db.db("mydb");
+//     dbo.collection("customers").findOne({}, function(err, result) {
+//       if (err) throw err;
+//       console.log(result.name);
+//       db.close();
+//     });
+//   });
+
+
+
 // fetch loggedin user
 app.get('/user', async (request, response) => {
     const email = "anonyecharles@gmail.com"
