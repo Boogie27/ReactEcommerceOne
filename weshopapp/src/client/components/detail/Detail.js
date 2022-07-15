@@ -20,11 +20,15 @@ import {
     today,
     moneySign, 
     userImageURL, 
-    current_user, 
+    current_user,
+    category_img,
+    product_img,
+    profile_img,
     productImageURL 
 } from '../../Data'
 import AlertDanger from '../alerts/AlertDanger'
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
@@ -42,13 +46,18 @@ const Detail = () => {
     const [starsAlert, setStarsAlert] = useState('')
     const [titleAlert, setTitleAlert] = useState('')
     const [reviewsAlert, setReviewsAlert] = useState('')
+    const [activeStars, setActiveStars] = useState(0)
     const [stars, setStars] = useState(0)
     const [title, setTitle] = useState('')
     const [productReviews, setProductReviews] = useState('')
-    
+
+    const [starsCount, setStarsCount] = useState(0)
     const product_id = searchParams.get('product')
+    
    
     useEffect(() => {
+        
+
         // fetch product detail
         fetchProductDetail(product_id)
 
@@ -64,17 +73,16 @@ const Detail = () => {
     }
 
     const fetchProductReviews = (product_id) => {
-        // Axios.get(url(`/reviews?product_id=${product_id}`)).then((response) => {
-        //     setReviews(response.data)
-        // })
-
-        Axios.get(url(`/product-reviews?product_id=${product_id}`)).then((response) => {
-            setReviews(response.data)
+        Axios.get(url(`/reviews?product_id=${product_id}`)).then((response) => {
+            setReviews(response.data.reviews)
         })
     }
 
 
+    
 
+
+    // submit product review
     const submitReview = () => {
         setIsSubmit(true)
         setStarsAlert('')
@@ -82,41 +90,103 @@ const Detail = () => {
         setReviewsAlert('')
 
         if(title == ''){
+            setIsSubmit(false)
             setTitleAlert('Title field is required!')
         }
-        if(stars == 0){
-            setStarsAlert('Select stars rating')
-            console.log(starsAlert)
+        if(productReviews == ''){
+            setIsSubmit(false)
+            setReviewsAlert('Review field is required!')
         }
-         console.log(stars)
-        // Axios.post(url('/submit-review'), {
-        //     user_id: current_user._id,
-        //     product_id: product_id,
-        //     stars: stars,
-        //     title: title,
-        //     reviews: productReviews,
-        //     created_at: today,
-        // })
+        if(stars == 0){
+            setIsSubmit(false)
+            setStarsAlert('Select stars rating')
+        }
+        if(title && productReviews && stars){
+            Axios.post(url('/submit-review'), {
+                stars: stars,
+                title: title,
+                product_id: product_id,
+                reviews: productReviews,
+                user_id: current_user._id,
+                created_at: today(),
+            }).then((response) => {
+                setIsSubmit(false)
+                if(response.data == 'success'){
+                    setStars(0)
+                    setTitle('')
+                    setActiveStars(0)
+                    setProductReviews('')
+                    fetchProductReviews(product_id)
+    
+                    notify_success('Review submitted successfully!')
+                }
+                if(response.data == 'reviewed'){
+                    setStars(0)
+                    setTitle('')
+                    setActiveStars(0)
+                    setProductReviews('')
+                    notify_error('Product has already been reviewd!')
+                }
+            })
+        }
     }
     
+    const notify_success = (string) => {
+        toast.success(string, {
+          position: "bottom-right",
+          autoClose: 5000,
+          draggable: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          progress: undefined,
+          hideProgressBar: false,
+          });
+    }
 
 
+    const notify_error = (string) => {
+        toast.error(string, {
+          position: "bottom-right",
+          autoClose: 5000,
+          draggable: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          progress: undefined,
+          hideProgressBar: false,
+          });
+    }
+
+
+    // delete reviews
+    const deleteReview = (review_id) => {
+        const items = reviews.filter((review) => review._id !== review_id)
+        setReviews(items)
+        Axios.post(url('/delete-review'), { review_id: review_id})
+        .then((response) => {
+            notify_success('Review deleted successfully!')
+        })
+    }
 
     return (
         <div className="product-detail-container">
            {
                 productDetail ? (
                     <>
-                        <DetailTop reviews={reviews} productDetail={productDetail}/>
+                        <DetailTop reviews={reviews} productDetail={productDetail} setStarsCount={setStarsCount} starsCount={starsCount}/>
                         <DetailMiddle 
+                            productDetail={productDetail} 
                             reviews={reviews} stars={stars} productReviews={productReviews}
                             reviews={reviews} setProductReviews={setProductReviews} isSubmit={isSubmit}
                             title={title} setTitle={setTitle} setStars={setStars} submitReview={submitReview}
-                            starsAlert={starsAlert}
+                            starsAlert={starsAlert} titleAlert={titleAlert} reviewsAlert={reviewsAlert}
+                            activeStars={activeStars} setActiveStars={setActiveStars} deleteReview={deleteReview}
                         />
                     </>
                 ) : null
             }
+            <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} 
+                newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover
+            />
         </div>
     )
 }
@@ -127,12 +197,12 @@ export default Detail
 
 
 
-const DetailTop = ({ reviews, productDetail }) => {
+const DetailTop = ({ reviews, productDetail, setStarsCount, starsCount }) => {
     return (
         <div className="detail-img-container">
             <div className="inner-detail-img">
                 <ProductImage images={productDetail.image}/>
-                <ProductDetail reviews={reviews} productDetail={productDetail}/>
+                <ProductDetail reviews={reviews} productDetail={productDetail} setStarsCount={setStarsCount} starsCount={starsCount}/>
             </div>
         </div>
     )
@@ -196,13 +266,13 @@ const DirectionButton = () => {
 
 
 
-const ProductDetail = ({ reviews, productDetail }) => {
+const ProductDetail = ({ reviews, productDetail, setStarsCount, starsCount }) => {
     return (
         <div className="product-detail">
            <div className="title-header"><h3>{productDetail.product_name}</h3></div>
             <div className="detail-reviews">
                 <ul className="ul-detail-top">
-                    <li><ProductStars reviews={reviews}/></li>
+                    <li><ProductStars reviews={reviews} setStarsCount={setStarsCount} starsCount={starsCount}/></li>
                     <li>({reviews.length}) reviews</li>
                     <li className="li-link"><FontAwesomeIcon className="icon-pen"  icon={faPen} />Write a review</li>
                 </ul>
@@ -219,14 +289,30 @@ const ProductDetail = ({ reviews, productDetail }) => {
 
 
 
-const ProductStars = ({reviews}) => {
+const ProductStars = ({reviews, setStarsCount, starsCount}) => {
+    const stars = Array(5).fill(0)
+    // product star rating
+    const total_stars = (string) => {
+        let total = 0
+
+        if(string.length == 0){
+            return setStarsCount(0)
+        }
+        string.map((review) => {
+            total = total + review.stars
+        })
+        let rate = Math.round( total /  string.length)
+        setStarsCount(rate)
+        console.log(starsCount)
+    }
+    total_stars(reviews)
+
     return (
         <div className="review-stars">
-            <FontAwesomeIcon className="star active"  icon={faStar} />
-            <FontAwesomeIcon className="star active"  icon={faStar} />
-            <FontAwesomeIcon className="star active"  icon={faStar} />
-            <FontAwesomeIcon className="star"  icon={faStar} />
-            <FontAwesomeIcon className="star"  icon={faStar} />
+        {
+            stars.map((star, index) => <FontAwesomeIcon key={index} className={`star ${index + 1 <= starsCount ? 'active' : ''}`}  icon={faStar} />)
+        }
+            {starsCount}
         </div>
     )
 }
@@ -285,7 +371,12 @@ const WishListAdd = () => {
 
 
 
-const DetailMiddle = ({reviews, isSubmit, starsAlert, setProductReviews, title, setTitle, setStars, stars, productReviews, submitReview}) => {
+const DetailMiddle = ({
+    reviews, isSubmit, starsAlert, setProductReviews, title, 
+    setTitle, setStars, stars, productReviews, submitReview,
+    titleAlert, reviewsAlert,  activeStars, setActiveStars,
+    deleteReview, productDetail
+    }) => {
     const [descReviewState, setDescReviewState] = useState('description')
 
     const toogleDescReview = (state) => {
@@ -304,11 +395,12 @@ const DetailMiddle = ({reviews, isSubmit, starsAlert, setProductReviews, title, 
             </ul>
             <div className="desc-reviews-body">
                 {
-                    descReviewState == 'description' ? (<Description/>) : (
+                    descReviewState == 'description' ? (<Description productDetail={productDetail}/>) : (
                     <Reviews 
                         reviews={reviews} setProductReviews={setProductReviews} submitReview={submitReview}
                         title={title} setTitle={setTitle} setStars={setStars} stars={stars} productReviews={productReviews}
-                        isSubmit={isSubmit} starsAlert={starsAlert}
+                        isSubmit={isSubmit} starsAlert={starsAlert} titleAlert={titleAlert} reviewsAlert={reviewsAlert}
+                        activeStars={activeStars} setActiveStars={setActiveStars} deleteReview={deleteReview}
                     />)
                 }
             </div>
@@ -319,19 +411,10 @@ const DetailMiddle = ({reviews, isSubmit, starsAlert, setProductReviews, title, 
 
 
 
-const Description = () => {
+const Description = ({productDetail}) => {
     return (
         <div className="description">
-            <p>
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
-            Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non 
-            numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima 
-            veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?
-             Quis autem vel eum iure reprehenderit qui in ea voluptate veli
-            quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur
-            </p>
+            <p>{productDetail.product_desc}</p>
         </div>
     )
 }
@@ -340,7 +423,11 @@ const Description = () => {
 
 
 
-const Reviews = ({reviews, starsAlert, setProductReviews, isSubmit, title, setTitle, setStars, stars, productReviews, submitReview}) => {
+const Reviews = ({
+    reviews, starsAlert, setProductReviews, isSubmit, title, setTitle, 
+    setStars, stars, productReviews, submitReview, titleAlert, reviewsAlert,
+    activeStars, setActiveStars, deleteReview
+    }) => {
     return (
         <div className="reviews-container">
             <Row className="show-grid">
@@ -351,7 +438,7 @@ const Reviews = ({reviews, starsAlert, setProductReviews, isSubmit, title, setTi
                         }
                         
                         {
-                            reviews.map((review, index) => <UserReviews key={index} review={review}/>)
+                            reviews.map((review, index) => <UserReviews key={index} deleteReview={deleteReview} review={review}/>)
                         }
                         
                     </div>
@@ -361,7 +448,8 @@ const Reviews = ({reviews, starsAlert, setProductReviews, isSubmit, title, setTi
                         setProductReviews={setProductReviews} isSubmit={isSubmit}
                         title={title} setTitle={setTitle} submitReview={submitReview} 
                         setStars={setStars} stars={stars} productReviews={productReviews}
-                        starsAlert={starsAlert}
+                        starsAlert={starsAlert} titleAlert={titleAlert} reviewsAlert={reviewsAlert}
+                        activeStars={activeStars} setActiveStars={setActiveStars}
                     />
                 </Col>
             </Row>
@@ -377,22 +465,23 @@ const Reviews = ({reviews, starsAlert, setProductReviews, isSubmit, title, setTi
 
 
 
-const UserReviews = ({review}) => {
+const UserReviews = ({review, deleteReview}) => {
     const date = Moment(review.created_at).format('MMM Do YY')
     const stars = Array(5).fill(0)
+    const user = review.user
 
     return (
         <div className="user-reviews">
-            <div className="user-review-img online">
-                <img src="asset/client/users/avatar/1.png" alt=""/>
+            <div className={`user-review-img ${user.is_active ? 'online' : 'offline'}`}>
+                <img src={profile_img(user.image)} alt=""/>
             </div>
             <div className="user-reviews-p">
                 <ul>
                     <li className="title-header">
-                        <h4>Boogie charles</h4>
+                        <h4>{user.user_name}</h4>
                         <div className="review-date">
                             {date}
-                            <FontAwesomeIcon className="review-delete"  icon={faTrashCan} />
+                            <FontAwesomeIcon onClick={() => deleteReview(review._id)} className="review-delete"  icon={faTrashCan} />
                         </div>
                     </li>
                     <li>
@@ -418,11 +507,10 @@ const UserReviews = ({review}) => {
 const ReviewForm = ({
         setProductReviews, isSubmit, title, setTitle, 
         setStars, stars, productReviews, submitReview,
-        starsAlert,
+        starsAlert, titleAlert, reviewsAlert,  activeStars, setActiveStars
     }) => {
     const formStars = Array(5).fill(0)
     const [isClicked, setIsClicked] = useState(false)
-    const [activeStars, setActiveStars] = useState()
 
     const animateStar = (action) => {
         setActiveStars(action.index)
@@ -430,7 +518,7 @@ const ReviewForm = ({
 
         if(action == false && isClicked){
             setStars(isClicked.index + 1)
-            setActiveStars(isClicked.index)
+            setActiveStars(isClicked.index + 1)
         }else{
             setIsClicked(false)
             setStars(action.index + 1)
@@ -439,10 +527,7 @@ const ReviewForm = ({
         if(!isClicked && action == false && stars > 0){
             setStars(0)
         }
-        
     }
-
-
    
     return (
         <div className="review-form">
@@ -451,24 +536,24 @@ const ReviewForm = ({
                 <div className="form-stars">
                     <div className="star-title-header">
                         {
-                            starsAlert && (<AlertDanger alert="Select stars!"/>) 
+                            starsAlert && (<AlertDanger alert={starsAlert}/>) 
                         }
                         <h4>How would you rate thing item?</h4>
                     </div>
                     <div   onMouseLeave={() => animateStar(false)} className="form-star-container">
                     {
-                        formStars.map((star, index) => (<FontAwesomeIcon onClick={() => setIsClicked({index: index, state: 'click'})} onMouseEnter={() => animateStar({index: index, state: 'hover'})} key={index} className={`star  ${index <= activeStars ? 'active' : ''}`}  icon={faStar} />))
+                        formStars.map((star, index) => (<FontAwesomeIcon onClick={() => setIsClicked({index: index, state: 'click'})} onMouseEnter={() => animateStar({index: index, state: 'hover'})} key={index} className={`star  ${ index + 1 <= activeStars ? 'active' : ''}`}  icon={faStar} />))
                     }
                     </div>
                     <div className="star-count">({stars})</div>
                 </div>
                 <div className="form-group">
-                    <label htmlFor="title">Title: <span>*</span></label>
+                    <label htmlFor="title">Title: <span>*</span> <span className="form-alert text-danger">{titleAlert}</span></label>
                     <input type="text" className="form-control" value={title} onChange={(e) => setTitle(e.target.value)}/>
                 </div>
                 <div className="form-group">
-                    <label htmlFor="title">Review: <span>*</span></label>
-                    <textarea rows="4" cols="50" className="form-control" onChange={(e) => setProductReviews(e.target.value)}></textarea>
+                    <label htmlFor="title">Review: <span>*</span> <span className="form-alert text-danger">{reviewsAlert}</span></label>
+                    <textarea rows="4" cols="50" className="form-control" value={productReviews} onChange={(e) => setProductReviews(e.target.value)}></textarea>
                 </div>
                 <div className="form-button">
                     <button onClick={() => submitReview()} type="submit">{ isSubmit ? 'Please wait...' : 'SUBMIT REVIEW'}</button>

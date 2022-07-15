@@ -13,13 +13,14 @@ const categoryImageURL = 'asset/client/products/categories/'
 
 const current_user = {
         _id: "62b202da0e79f00bcad9f400",
+        // _id: "62b203200e79f00bcad9f401",
         user_name: "boogie",
         email: "anonyecharles@gmail.com",
         password: "111111",
         image: "1.png",
         first_name: "charles",
         last_name: "anonye",
-        is_active: 1,
+        is_active: 0,
         theme: "light",
         last_login: "2022-12-04T00:00:00.000Z",
         remember_me: "token_here",
@@ -43,6 +44,21 @@ const today = () => {
 }
 
 
+const profile_img = (string) => {
+    return 'asset/client/users/profile-image/' + string
+}
+
+
+const product_img = (string) => {
+    return 'asset/client/products/products/' + string
+}
+
+
+const category_img = (string) => {
+    return 'asset/client/products/categories/' + string
+}
+
+
 
 
 
@@ -54,6 +70,9 @@ export {
     moneySign,
     current_user,
     userImageURL,
+    category_img,
+    product_img,
+    profile_img,
     productImageURL,
     categoryImageURL,
 }
