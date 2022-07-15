@@ -3,16 +3,16 @@ const mongoose = require('mongoose')
 
 
 const reviewsSchema  = new mongoose.Schema({
-    user_id: {
-        type: String,
-        required: true
-    },
     product_id: {
         type: String,
         required: true
     },
     stars: {
         type: Number,
+        required: true
+    },
+    title: {
+        type: String,
         required: true
     },
     reviews: {
@@ -23,6 +23,11 @@ const reviewsSchema  = new mongoose.Schema({
         type: Date,
         required: true
     },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'users',
+      },
 })
 
 

@@ -66,67 +66,47 @@ app.get('/detail', async (request, response) => {
 // fetch product reviews
 app.get('/reviews', async (request, response) => {
     let product_id = request.query.product_id
-    PRODUCT_REVIEW_MODEL.find({ product_id: product_id}, (error, result) => {
-        if(error){
-            return response.send(error)
-        }
-        return response.send(result)
-    })
+    const reviews = await PRODUCT_REVIEW_MODEL.find({product_id: product_id}).populate(
+        'user',
+        'first_name last_name image is_active'
+      )
+      return response.json({ reviews });
+})
+
+
+// submit reviews 
+app.post('/submit-review', async (request, response) => {
+    const object = request.body
+    const check = await PRODUCT_REVIEW_MODEL.findOne({user: object.user_id, product_id: object.product_id}).exec()
+    if(check){
+        return response.send('reviewed')
+    }
+    const review = {
+        user: object.user_id,
+        product_id: object.product_id,
+        stars: object.stars,
+        title: object.title,
+        reviews: object.reviews,
+        created_at: object.created_at,
+    }
+    const newReview = PRODUCT_REVIEW_MODEL(review)
+    await newReview.save()
+    return response.send('success')
 })
 
 
 
-app.get('/product-reviews', async (request, response) => {
-    let product_id = request.query.product_id
-    PRODUCT_REVIEW_MODEL.aggregate([
-        { $lookup:
-           {
-                from: 'users',
-                localField: 'user_id',
-                foreignField: '_id',
-                as: 'user_reviews'
-           }
-         }
-        ], (error, result) => {
-            if(error){
-                return response.send(error)
-            }
-            return response.send(result)
-        })
-});
+// delete review
+app.post('/delete-review', async (request, response) => {
+    const review_id = request.body.review_id
+    const delete_review = PRODUCT_REVIEW_MODEL.remove({_id: review_id}).exec()
+    if(delete_review){
+        return response.send(true)
+    }
+    return response.send(false)
+})
 
 
-
-// MongoClient.connect(url, function(err, db) {
-//     if (err) throw err;
-//     var dbo = db.db("mydb");
-//     dbo.collection('orders').aggregate([
-//       { $lookup:
-//          {
-//            from: 'products',
-//            localField: 'product_id',
-//            foreignField: '_id',
-//            as: 'orderdetails'
-//          }
-//        }
-//       ]).toArray(function(err, res) {
-//       if (err) throw err;
-//       console.log(JSON.stringify(res));
-//       db.close();
-//     });
-//   });
-
-
-
-// MongoClient.connect(url, function(err, db) {
-//     if (err) throw err;
-//     var dbo = db.db("mydb");
-//     dbo.collection("customers").findOne({}, function(err, result) {
-//       if (err) throw err;
-//       console.log(result.name);
-//       db.close();
-//     });
-//   });
 
 
 
@@ -141,17 +121,6 @@ app.get('/user', async (request, response) => {
         return response.send(result)
     })
 })
-
-
-
-
-// submit reviews 
-app.post('/submit-review', async (request, response) => {
-    const user_id = request.body
-
-    console.log(user_id)
-})
-
 
 
 
