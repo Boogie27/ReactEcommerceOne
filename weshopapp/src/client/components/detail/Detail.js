@@ -5,6 +5,7 @@ import {
     faPen,
     faStar,
     faHeart,
+    faXmark,
     faTrashCan,
     faThumbsUp,
     faThumbsDown,
@@ -29,6 +30,7 @@ import {
 import AlertDanger from '../alerts/AlertDanger'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ModalDropDown from '../dropdown/ModalDropDown'
 
 
 
@@ -181,6 +183,7 @@ const Detail = () => {
                             starsAlert={starsAlert} titleAlert={titleAlert} reviewsAlert={reviewsAlert}
                             activeStars={activeStars} setActiveStars={setActiveStars} deleteReview={deleteReview}
                         />
+                        <ModalDropDown/>
                     </>
                 ) : null
             }
@@ -192,6 +195,11 @@ const Detail = () => {
 }
 
 export default Detail
+
+
+
+
+
 
 
 
@@ -303,7 +311,6 @@ const ProductStars = ({reviews, setStarsCount, starsCount}) => {
         })
         let rate = Math.round( total /  string.length)
         setStarsCount(rate)
-        console.log(starsCount)
     }
     total_stars(reviews)
 
@@ -312,7 +319,6 @@ const ProductStars = ({reviews, setStarsCount, starsCount}) => {
         {
             stars.map((star, index) => <FontAwesomeIcon key={index} className={`star ${index + 1 <= starsCount ? 'active' : ''}`}  icon={faStar} />)
         }
-            {starsCount}
         </div>
     )
 }

@@ -12,8 +12,8 @@ const categoryImageURL = 'asset/client/products/categories/'
 
 
 const current_user = {
-        _id: "62b202da0e79f00bcad9f400",
-        // _id: "62b203200e79f00bcad9f401",
+        // _id: "62b202da0e79f00bcad9f400",
+        _id: "62b203200e79f00bcad9f401",
         user_name: "boogie",
         email: "anonyecharles@gmail.com",
         password: "111111",
