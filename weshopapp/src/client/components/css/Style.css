@@ -75,7 +75,6 @@ a{
     width: 100%;
     height: 100%;
     display: flex;
-    cursor: pointer;
     align-items: center;
     justify-content: center;
     background-color: rgba(51, 51, 51, 0.698);
@@ -91,6 +90,9 @@ a{
     height: 0px;
     text-align: right;
     position: relative;
+}
+.modal-close .icon{
+    cursor: pointer;
 }
 .modal-close .icon:hover{
     color: rgb(151, 40, 40);
@@ -120,6 +122,15 @@ a{
 }
 .body-modal button .icon{
     margin: 0px 10px;
+}
+.parent-container.active .modal-dropdown-body{
+    background-color: rgb(37, 37, 37);
+    border: 1px solid rgb(99, 99, 99)
+}
+.parent-container.active .body-modal h4, 
+.parent-container.active .modal-close .icon
+{
+    color: #fff;
 }
 @media only screen and (max-width: 1125px){
     .modal-dropdown-body{
@@ -2005,6 +2016,9 @@ span.css-1xdhyk6 span{
     font-size: 13px;
     font-weight: 600;
 }
+.parent-container.active .review-form-body .form-stars .star-count{
+    color: #fff;
+}
 .review-form-body .form-group{
     margin: 20px 0px;
 }
@@ -2046,6 +2060,9 @@ span.css-1xdhyk6 span{
     color: rgb(114, 114, 114);
     font-size: 14px;
     font-weight: 600;
+}
+.parent-container.active .user-reviews-p ul li.review-review h4{
+    color: rgb(148, 148, 148);
 }
 .review-form-body button:hover{
     background-color: rgb(184, 125, 15);

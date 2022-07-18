@@ -1,15 +1,12 @@
-import React, { useRef, useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { 
-  faEye,
+import {
   faStar,
   faHeart,
   faXmark,
   faArrowRight,
   faArrowLeft,
 } from '@fortawesome/free-solid-svg-icons'
-import BottomBanner from '../footer/BottomBanner'
 import { moneySign, productImageURL } from '../../Data'
 
 

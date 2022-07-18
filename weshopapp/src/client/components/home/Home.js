@@ -6,7 +6,6 @@ import SideProduct from './SideProduct'
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { 
   faEye,
@@ -15,13 +14,12 @@ import {
   faCartShopping
 } from '@fortawesome/free-solid-svg-icons'
 import BottomBanner from '../footer/BottomBanner'
-import QuickView from './QuickView'
-import { url, userImageURL, productImageURL} from '../../Data'
+import QuickView from '../quickview/QuickView'
+import { url, userImageURL, moneySign, productImageURL} from '../../Data'
+import FeaturedProduct from '../featured/FeaturedProduct'
 
 
 
-
-const moneySign = '£'
 
 
 const categories = [
@@ -48,82 +46,6 @@ const categories = [
 
 
 
-
-
-
-const latestProducts_xx = [
-    {
-        id: 1,
-        product_name: 'iphone',
-        image: [
-          'asset/client/products/products/8.jpg',
-          // 'asset/client/products/products/2.jpg'
-        ],
-        product_desc: 'Itaque Earum Rerum Hic Tenetur Alias',
-        price: '83.00',
-        old_price: '87.00',
-        quantity: 10
-    },
-    {
-        id: 2,
-        product_name: 'game',
-        image: [
-          'asset/client/products/products/10.jpg',
-          'asset/client/products/products/6.jpg'
-        ],
-        product_desc: 'Itaque Earum Rerum Hic Tenetur Alias',
-        price: '81.00',
-        old_price: '89.00',
-        quantity: 0
-    },
-    {
-        id: 3,
-        product_name: 'cloth',
-        image: [
-          'asset/client/products/products/5.jpg',
-          'asset/client/products/products/3.jpg'
-        ],
-        product_desc: 'Itaque Earum Rerum Hic Tenetur Alias',
-        price: '88.00',
-        old_price: '99.00',
-        quantity: 10
-    },
-    {
-        id: 4,
-        product_name: 'headset',
-        image: [
-          'asset/client/products/products/9.jpg',
-          'asset/client/products/products/4.jpg'
-      ],
-        product_desc: 'Itaque Earum Rerum Hic Tenetur Alias',
-        price: '85.00',
-        old_price: '93.00',
-        quantity: 0
-    },
-    {
-      id: 5,
-      product_name: 'headset',
-      image: [
-        'asset/client/products/products/1.jpg',
-    ],
-      product_desc: 'Itaque Earum Rerum Hic Tenetur Alias',
-      price: '85.00',
-      old_price: '93.00',
-      quantity: 10
-  },
-  {
-    id: 6,
-    product_name: 'headset',
-    image: [
-      'asset/client/products/products/10.jpg',
-      'asset/client/products/products/3.jpg'
-  ],
-    product_desc: 'Itaque Earum Rerum Hic Tenetur Alias',
-    price: '85.00',
-    old_price: '93.00',
-    quantity: 0
-  }
-]
 
 
 const Home = ({appState}) => {
@@ -200,10 +122,10 @@ const HomeBody = ({categories, latestProducts, showQuickView}) => {
           <div className="latest-p-body">
             <Row className="show-grid">
               {
-                latestProducts.map((latestProduct) => (
-                  <Col key={latestProduct._id} xs={12} sm={6} md={4}>
+                latestProducts.map((featuredProduct) => (
+                  <Col key={featuredProduct._id} xs={12} sm={6} md={4}>
                   {
-                    latestProduct.image.length > 0 ? ( <LatestProducts showQuickView={showQuickView} latestProduct={latestProduct}/> ) : null
+                    featuredProduct.image.length > 0 ? ( <FeaturedProduct showQuickView={showQuickView} featuredProduct={featuredProduct}/> ) : null
                   }
                   </Col>
                 )) 
@@ -234,108 +156,6 @@ const TopCategories = ({category}) => {
 }
 
 
-
-
-
-
-const LatestProducts = ({latestProduct, showQuickView}) => {
-  return (
-      <div className="latest-p-container">
-        <div className="latest-p-item">
-          <div className="latest-p-img">
-          <NavLink to={`/detail?product=${latestProduct._id}`}>
-              <img src={productImageURL + latestProduct.image[0]} alt={latestProduct.product_name} />
-            </NavLink>
-          </div>
-          <div className="latest-p-text">
-            <ul>
-              <li className="product-name"><NavLink to="/">{latestProduct.product_name}</NavLink></li>
-              <li className="product-desc"><NavLink to="/">{latestProduct.product_desc}</NavLink></li>
-              <li className="product-price">{moneySign + latestProduct.price}</li>
-              <li className="latest-pb-button">
-                <ProductLinksOne/>
-              </li>
-            </ul>
-          </div>
-          <div className="float-item-container">
-            <FloatItems latestProduct={latestProduct} showQuickView={showQuickView}/>
-          </div>
-        </div>
-        <div className="product-link-two">
-          <ProductLinksTwo showQuickView={showQuickView} latestProduct={latestProduct}/>
-        </div>
-      </div>
-  )
-}
-
-
-
-
-
-const ProductLinksOne = () => {
-  return (
-    <>
-      <div className="stars">
-        <FontAwesomeIcon className="star active"  icon={faStar} />
-        <FontAwesomeIcon className="star active"  icon={faStar} />
-        <FontAwesomeIcon className="star active"  icon={faStar} />
-        <FontAwesomeIcon className="star"  icon={faStar} />
-        <FontAwesomeIcon className="star"  icon={faStar} />
-      </div>
-      <div className="cart-icon"><FontAwesomeIcon  icon={faCartShopping} /></div>
-    </>
-  )
-}
-
-
-
-
-
-
-const ProductLinksTwo = ({showQuickView, latestProduct}) => {
-  return (
-    <div className="product-link-body">
-      <div className="cart-icon"><FontAwesomeIcon  icon={faHeart} /></div>
-      <div className="cart-icon"><FontAwesomeIcon  onClick={() => showQuickView(latestProduct)} icon={faEye} /></div>
-      <div className="cart-icon"><FontAwesomeIcon  icon={faCartShopping} /></div>
-    </div>
-  )
-}
-
-
-
-
-const FloatItems = ({latestProduct, showQuickView}) => {
-  const [floatImage, setFloatImage] = useState(false)
-
-  const floatImageScreenIn = () => {
-    setFloatImage(true)
-  }
-
-  const floatImageScreenOut = () => {
-    setFloatImage(false)
-  }
-
-  return (
-    <div className="float-item" onMouseEnter={() => floatImageScreenIn()} onMouseLeave={() => floatImageScreenOut()}>
-      {
-        latestProduct.image.length > 1 ? (
-        <div className={`float-item-img ${floatImage && 'active'}`}>
-         <NavLink to={`/detail?product=${latestProduct._id}`}>
-            <img src={productImageURL + latestProduct.image[1]} alt={latestProduct.product_name}/>
-          </NavLink>
-        </div>
-        ) : null
-      }
-      <div className="float-item-btn">
-        <ul className={`${floatImage && 'active'}`}>
-          <li className="icon-btn"><FontAwesomeIcon className="icon"  icon={faHeart} /></li>
-          <li className="icon-btn"><FontAwesomeIcon onClick={() => showQuickView(latestProduct)} className="icon"  icon={faEye} /></li>
-        </ul>
-      </div>
-    </div>
-  )
-}
 
 
 
@@ -395,70 +215,3 @@ const FeaturedProducts = ({featuredProducts, showQuickView}) => {
 
 
 
-const FeaturedProduct = ({featuredProduct, showQuickView}) => {
-  return (
-      <div className="latest-p-container">
-        <div className="latest-p-item">
-          <div className="latest-p-img">
-            <NavLink to={`/detail?product=${featuredProduct._id}`}>
-              <img src={productImageURL + featuredProduct.image[0]} alt={featuredProduct.product_name} />
-            </NavLink>
-          </div>
-          <div className="latest-p-text">
-            <ul>
-              <li className="product-name"><NavLink to="/">{featuredProduct.product_name}</NavLink></li>
-              <li className="product-desc"><NavLink to="/">{featuredProduct.product_desc}</NavLink></li>
-              <li className="product-price">{moneySign + featuredProduct.price}</li>
-              <li className="latest-pb-button">
-                <ProductLinksOne/>
-              </li>
-            </ul>
-          </div>
-          <div className="float-item-container">
-            <FeaturedFloatItems featuredProduct={featuredProduct} showQuickView={showQuickView}/>
-          </div>
-        </div>
-        <div className="product-link-two">
-          <ProductLinksTwo showQuickView={showQuickView} featuredProduct={featuredProduct}/>
-        </div>
-      </div>
-  )
-}
-
-
-
-
-
-
-
-const FeaturedFloatItems = ({featuredProduct, showQuickView}) => {
-  const [floatImage, setFloatImage] = useState(false)
-
-  const floatImageScreenIn = () => {
-    setFloatImage(true)
-  }
-
-  const floatImageScreenOut = () => {
-    setFloatImage(false)
-  }
-
-  return (
-    <div className="float-item" onMouseEnter={() => floatImageScreenIn()} onMouseLeave={() => floatImageScreenOut()}>
-      {
-        featuredProduct.image.length > 1 ? (
-        <div className={`float-item-img ${floatImage && 'active'}`}>
-          <NavLink to={`/detail?product=${featuredProduct._id}`}>
-            <img src={productImageURL + featuredProduct.image[1]} alt={featuredProduct.product_name}/>
-          </NavLink>
-        </div>
-        ) : null
-      }
-      <div className="float-item-btn">
-        <ul className={`${floatImage && 'active'}`}>
-          <li className="icon-btn"><FontAwesomeIcon className="icon"  icon={faHeart} /></li>
-          <li className="icon-btn"><FontAwesomeIcon onClick={() => showQuickView(featuredProduct)} className="icon"  icon={faEye} /></li>
-        </ul>
-      </div>
-    </div>
-  )
-}
