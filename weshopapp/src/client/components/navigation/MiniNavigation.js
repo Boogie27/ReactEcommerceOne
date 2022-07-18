@@ -14,6 +14,7 @@ const MiniNavigation = () => {
                         <li><NavLink to="/detail">CONTACT</NavLink></li>
                         <li><NavLink to="/special">SPECIAL</NavLink></li>
                         <li><NavLink to="/wishlist">WISHLIST</NavLink></li>
+                        <li><NavLink to="/register">REGISTER</NavLink></li>
                         <li><NavLink to="/login">LOGIN</NavLink></li>
                     </ul>
                 </div>

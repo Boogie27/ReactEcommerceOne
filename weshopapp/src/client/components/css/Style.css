@@ -2118,14 +2118,80 @@ span.css-1xdhyk6 span{
         font-size: 10px;
     }
 }
-
-
-
-
-
-
-
-
+/* ************** AUTHENICATION PAGE ***************** */
+.auth-container{
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    padding: 100px 0px;
+}
+.auth-right, .auth-left{
+    width: 50%;
+}
+.auth-left{
+    /* border: 1px solid #ccc; */
+}
+.auth-left img{
+    width: 400px;
+}
+.auth-right .title-header h3{
+    font-weight: bold;
+}
+.auth-right .title-header p{
+    color: rgb(168, 168, 168);
+}
+.auth-form .form-group{
+    margin: 20px 0px;
+}
+.auth-form .form-group{
+    width: 80%;
+    display: flex;
+    position: relative;
+}
+.auth-form .form-group .form-icon{
+    top: 10px;
+    left: 15px;
+    width: 5%;
+    position: absolute;
+}
+.auth-form .form-group .form-icon .icon{
+    color: #555;
+}
+.auth-form .form-group .form-icon .icon.active{
+    color: rgb(224, 157, 32);
+}
+.auth-form .form-group input{
+    width: 100%;
+    border-radius: 0px;
+    border: 1px solid #555;
+    padding: 10px 10px 10px 40px;
+}
+.auth-form .form-group input:focus{
+    outline: none;
+    border-radius: 0px;
+    color: rgb(224, 157, 32);
+    border: 1px solid rgb(224, 157, 32);
+}
+.form-button .register-btn{
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    padding: 10px 40px;
+    border-radius: 50px;
+    background-color: rgb(224, 157, 32);
+}
+.form-button{
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.login-link a{
+    font-weight: 500;
+}
+.login-link a:hover{
+    color: rgb(224, 157, 32);
+}
 
 
 

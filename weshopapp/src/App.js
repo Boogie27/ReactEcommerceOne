@@ -6,6 +6,8 @@ import Home from './client/components/home/Home'
 import Footer from './client/components/footer/Footer'
 import { NavLink } from 'react-router-dom'
 import Detail from './client/components/detail/Detail'
+import Login from './client/components/auth/Login'
+import Register from './client/components/auth/Register'
 import Navigation from './client/components/navigation/Navigation'
 import MiniNavigation from './client/components/navigation/MiniNavigation'
 import Axios from 'axios'
@@ -62,6 +64,8 @@ function App() {
       <Routes>
           <Route path="/" element={<Home appState={appState} />}/>
           <Route path="/detail" element={<Detail/>}/>
+          <Route path="/login" element={<Login/>}/>
+          <Route path="/register" element={<Register/>}/>
       </Routes>
       <Footer/>
     </div>

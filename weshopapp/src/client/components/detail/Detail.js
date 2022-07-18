@@ -30,10 +30,7 @@ import {
 import AlertDanger from '../alerts/AlertDanger'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {
-    ModalDropDown
-}
-from '../dropdown/ModalDropDown'
+import { ModalDropDown } from '../dropdown/ModalDropDown'
 import RelatedProducts from './RelatedProducts'
 import QuickView from '../quickview/QuickView'
 

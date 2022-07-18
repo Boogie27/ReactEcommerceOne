@@ -59,6 +59,11 @@ const category_img = (string) => {
 }
 
 
+const auth_img = (string) => {
+    return 'asset/client/auth/' + string
+}
+
+
 
 
 
@@ -67,6 +72,7 @@ export {
     logo, 
     money,
     today,
+    auth_img,
     moneySign,
     current_user,
     userImageURL,
