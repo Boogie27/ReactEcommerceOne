@@ -39,7 +39,7 @@ a{
 }
 .alert-bg-danger{
     font-size: 13px;
-    padding: 5px 0px;
+    padding: 5px 5px;
     border-radius: 3px;
     color: rgb(190, 8, 8);
     background-color: rgb(255, 174, 174);
@@ -53,8 +53,14 @@ a{
     background-color: rgb(189, 255, 189);
     border: 1px solid rgb(130, 245, 130);
 }
+.form-group{
+    margin-bottom: 10px;
+}
 .form-alert{
     font-size: 12px;
+}
+.form.form-alert{
+    height: 20px;
 }
 .parent-container{
     background-color: #fff;
@@ -2019,9 +2025,6 @@ span.css-1xdhyk6 span{
 .parent-container.active .review-form-body .form-stars .star-count{
     color: #fff;
 }
-.review-form-body .form-group{
-    margin: 20px 0px;
-}
 .review-form-body label{
     font-size: 14px;
     font-weight: 600;
@@ -2140,37 +2143,41 @@ span.css-1xdhyk6 span{
 .auth-right .title-header p{
     color: rgb(168, 168, 168);
 }
-.auth-form .form-group{
-    margin: 20px 0px;
+.auth-form .form-group-input{
+    /* margin: 20px 0px; */
 }
-.auth-form .form-group{
+.auth-form .form-group-input{
     width: 80%;
     display: flex;
     position: relative;
 }
-.auth-form .form-group .form-icon{
+.auth-form .form-group-input .form-icon{
     top: 10px;
     left: 15px;
     width: 5%;
     position: absolute;
 }
-.auth-form .form-group .form-icon .icon{
+.auth-form .form-group-input .form-icon .icon{
+    left: 0px;
     color: #555;
+    position: relative;
+    transition: left 0.3s ease;
 }
-.auth-form .form-group .form-icon .icon.active{
+.auth-form .form-group-input .form-icon .icon.active{
+    left: 7px;
     color: rgb(224, 157, 32);
 }
-.auth-form .form-group input{
+.auth-form .form-group-input input{
     width: 100%;
     border-radius: 0px;
     border: 1px solid #555;
     padding: 10px 10px 10px 40px;
 }
-.auth-form .form-group input:focus{
+.auth-form .form-group-input input:focus{
     outline: none;
     border-radius: 0px;
     color: rgb(224, 157, 32);
-    border: 1px solid rgb(224, 157, 32);
+    border-bottom: 2px solid rgb(224, 157, 32);
 }
 .form-button .register-btn{
     border: none;
@@ -2192,7 +2199,18 @@ span.css-1xdhyk6 span{
 .login-link a:hover{
     color: rgb(224, 157, 32);
 }
-
+.gender-container{
+    display: flex;
+    text-align: left;    
+}
+.gender-container .form-gender{
+    margin-right: 20px;
+    display: flex;
+}
+.gender-container .form-gender input{
+    cursor: pointer;
+    margin-right: 5px;
+}
 
 
 

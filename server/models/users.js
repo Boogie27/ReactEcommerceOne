@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 
 
 
@@ -18,15 +19,19 @@ const UserSchema  = new mongoose.Schema({
     },
     image: {
         type: String,
-        required: true
+        required: false
+    },
+    gender: {
+        type: String,
+        required: false
     },
     first_name: {
         type: String,
-        required: true
+        required: false
     },
     last_name: {
         type: String,
-        required: true
+        required: false
     },
     is_active: {
         type: Number,
@@ -42,7 +47,7 @@ const UserSchema  = new mongoose.Schema({
     },
     remember_me: {
         type: String,
-        required: true
+        required: false
     },
     created_at: {
         type: Date,
@@ -51,8 +56,18 @@ const UserSchema  = new mongoose.Schema({
 })
 
 
+// // encrypt password before saving
+// UserSchema.pre('save', async function (next){
+//     if(!this.isModified('password')){
+//         next()
+//     }
+
+//     const salt = await bcrypt.genSaltSync(5)
+//     this.password = await bcrypt.hashSync(this.password, salt)
+// })
 
 
-const user = mongoose.model("users", UserSchema)
 
-module.exports =  user
+const User = mongoose.model("users", UserSchema)
+
+module.exports =  User

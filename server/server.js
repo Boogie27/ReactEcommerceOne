@@ -7,11 +7,15 @@ const USER_MODEL = require('./models/users')
 const PRODUCT_MODEL = require('./models/products')
 const PRODUCT_REVIEW_MODEL = require('./models/reviews')
 
+const userRoute = require('./routes/userRoute') 
+require('dotenv').config()
+
+
 app.use(express.json())
 app.use(cors())
 
 
-const dataBaseURL = 'mongodb+srv://weshopapp:weshopapp123456@cluster0.lmbavfe.mongodb.net/weshopapp?retryWrites=true&w=majority'
+const dataBaseURL = process.env.MONGOOSE_URI
 const connectParams = {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -129,6 +133,14 @@ app.get('/user', async (request, response) => {
         return response.send(result)
     })
 })
+
+
+
+app.use('/api/users', userRoute)
+
+// register user
+app.use('/api/register-user', userRoute)
+
 
 
 

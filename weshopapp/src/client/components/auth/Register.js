@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { NavLink, useSearchParams  } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { 
+    faKey,
     faPen,
     faUser,
     faLock,
@@ -15,22 +16,107 @@ import {
     today, 
     auth_img
 } from '../../Data'
+import FormAlert from '../alerts/FormAlert'
 
 
 
 
 const Register = () => {
     const [input, setInput] = useState(null)
+    const [gender, setGender] = useState('male')
+    const [email, setEmail] = useState('')
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
+
+    const [formAlert, setFormAlert] = useState(false)
+    const [emailAlert, setEmailAlert] = useState('')
+    const [usernameAlert, setUsernameAlert] = useState('')
+    const [passwordAlert, setPasswordAlert] = useState('')
+    const [confirmPasswordAlert, setConfirmPasswordAlert] = useState('')
 
 
     const toggleInput = (string) => {
         setInput(string)
     }
 
+    const genderToggle = (gender) => {
+        setGender(gender)
+    }
+
+
+    // Register a User
+    const registerUser = () => {
+        const user = {
+            email: email,
+            username: username,
+            password: password,
+            confirmPassword: confirmPassword,
+            gender: gender
+        }
+
+        // validate input fields
+        validate_input(user)
+        if(formAlert) return
+
+        Axios.post(url('/api/register-user'), user).then((response) => {
+            console.log(response.data)
+        })
+    }
+
+
+
+
+    const validate_input = (input) => {
+        setFormAlert(false)
+        setEmailAlert('')
+        setUsernameAlert('')
+        setPasswordAlert('')
+        setConfirmPasswordAlert('')
+
+        const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        if(input.email === ""){
+            setEmailAlert("*Email field is required")
+        } else if(!input.email.match(validRegex)){
+            setEmailAlert("*Invalid email address")
+        }
+
+        if(input.username === ""){
+            setUsernameAlert("*Username field is required")
+        }else if(input.username.length < 3){
+            setUsernameAlert("*Must be minimum of 3 characters")
+        }else if(input.username.length > 50){
+            setUsernameAlert("*Must be maximum of 50 characters")
+        }
+
+        if(input.password === ""){
+            setPasswordAlert("*Passowrd field is required")
+        }else if(input.password.length < 6){
+            setPasswordAlert("*Must be minimum of 6 characters")
+        }else if(input.password.length > 12){
+            setPasswordAlert("*Must be maximum of 12 characters")
+        }
+
+        if(input.confirmPassword === ""){
+            setConfirmPasswordAlert("*Confirm passowrd field is required")
+        }else if(input.confirmPassword !== input.password){
+            setConfirmPasswordAlert("*Confirm password Must equalls password")
+        }
+
+        if(usernameAlert || emailAlert || passwordAlert || confirmPasswordAlert){
+            return setFormAlert(true)
+        }
+    }
+
     return (
         <div className="auth-container">
             <LeftSide/>
-            <RightSide toggleInput={toggleInput} input={input}/>
+            <RightSide toggleInput={toggleInput} input={input} gender={gender} password={password}
+                genderToggle={genderToggle} username={username} setUsername={setUsername}
+                setPassword={setPassword} registerUser={registerUser} confirmPassword={confirmPassword}
+                setConfirmPassword={setConfirmPassword} email={email} setEmail={setEmail} passwordAlert={passwordAlert}
+                emailAlert={emailAlert} usernameAlert={usernameAlert} confirmPasswordAlert={confirmPasswordAlert}
+            />
         </div>
     )
 }
@@ -44,41 +130,69 @@ export default Register
 const LeftSide = () => {
     return (
         <div className="auth-left">
-            <img src={auth_img('1.png')} alt="auth-image"/>
+            <img src={auth_img('1.png')} alt="auth-pic"/>
         </div>
     )
 }
 
 
 
-const RightSide = ({toggleInput, input}) => {
+const RightSide = ({
+    toggleInput, input, gender, genderToggle, registerUser, setConfirmPassword,
+    setUsername, username, password, setPassword, email, setEmail, confirmPassword,
+    emailAlert, usernameAlert, confirmPasswordAlert, passwordAlert
+    }) => {
     return (
         <div className="auth-right">
             <div className="title-header">
                 <h3>Hello There!</h3>
-                <p>Register to shop for prpoducts</p>
+                <p>Register to shop for products</p>
             </div>
             <div className="auth-form">
                 <div className="form-group">
-                    <div className="form-icon"><FontAwesomeIcon className={`icon ${input == 'username' ? 'active' : ''}`}  icon={faUser} /></div>
-                    <input type="text" onBlur={() => toggleInput(null)} onFocus={() => toggleInput('username')} placeholder="Enter username" />
+                    { usernameAlert && (<FormAlert alert={usernameAlert}/>) }
+                    <div className="form-group-input">
+                        <div className="form-icon"><FontAwesomeIcon className={`icon ${input === 'username' ? 'active' : ''}`}  icon={faUser} /></div>
+                        <input type="text" onChange={(e) => setUsername(e.target.value)} value={username} onBlur={() => toggleInput(null)} onFocus={() => toggleInput('username')} placeholder="Enter username" />
+                    </div>
                 </div>
                 <div className="form-group">
-                    <div className="form-icon"><FontAwesomeIcon className={`icon ${input == 'email' ? 'active' : ''}`}  icon={faEnvelope} /></div>
-                    <input type="email" onBlur={() => toggleInput(null)} onFocus={() => toggleInput('email')}  placeholder="Enter email" />
+                    { emailAlert && (<FormAlert alert={emailAlert}/>) }
+                    <div className="form-group-input">
+                        <div className="form-icon"><FontAwesomeIcon className={`icon ${input === 'email' ? 'active' : ''}`}  icon={faEnvelope} /></div>
+                        <input type="email" onChange={(e) => setEmail(e.target.value)} value={email} onBlur={() => toggleInput(null)} onFocus={() => toggleInput('email')}  placeholder="Enter email" />
+                    </div> 
                 </div>
                 <div className="form-group">
-                    <div className="form-icon"><FontAwesomeIcon className={`icon ${input == 'password' ? 'active' : ''}`}  icon={faLock} /></div>
-                    <input type="password" onBlur={() => toggleInput(null)} onFocus={() => toggleInput('password')}  placeholder="Enter password" />
+                    { passwordAlert && (<FormAlert alert={passwordAlert}/>) }
+                    <div className="form-group-input">
+                        <div className="form-icon"><FontAwesomeIcon className={`icon ${input === 'password' ? 'active' : ''}`}  icon={faKey} /></div>
+                        <input type="password" onChange={(e) => setPassword(e.target.value)} value={password} onBlur={() => toggleInput(null)} onFocus={() => toggleInput('password')}  placeholder="Enter password" />
+                    </div>
                 </div>
                 <div className="form-group">
-                    <div className="form-icon"><FontAwesomeIcon className={`icon ${input == 'confirm-password' ? 'active' : ''}`}  icon={faLock} /></div>
-                    <input type="password" onBlur={() => toggleInput(null)} onFocus={() => toggleInput('confirm-password')}  placeholder="Confirm password" />
+                    { confirmPasswordAlert && (<FormAlert alert={confirmPasswordAlert}/>) }
+                    <div className="form-group-input">
+                        <div className="form-icon"><FontAwesomeIcon className={`icon ${input === 'confirm-password' ? 'active' : ''}`}  icon={faLock} /></div>
+                        <input type="password" onChange={(e) => setConfirmPassword(e.target.value)} value={confirmPassword} onBlur={() => toggleInput(null)} onFocus={() => toggleInput('confirm-password')}  placeholder="Confirm password" />
+                    </div>
+                </div>
+                <div className="form-group">
+                    <div className="gender-container">
+                        <div className="form-gender">
+                            <input type="checkbox" onChange={() => genderToggle('male')} className="checkbox" value="male" checked={gender === 'male' ? 'checked' : ''}/>
+                            <label htmlFor="gender">Male</label>
+                        </div>
+                        <div className="form-gender">
+                            <input type="checkbox" onChange={() => genderToggle('female')} className="checkbox" value="female" checked={gender === 'female' ? 'checked' : ''}/>
+                            <label htmlFor="gender">Female</label>
+                        </div>
+                    </div>
                 </div>
                 <div className="form-button">
-                    <button className="register-btn">REGISTER</button>
+                    <button onClick={() => registerUser()} className="register-btn">REGISTER</button>
                     <div className="login-link">
-                        Already has account? <NavLink to="/login">Login</NavLink>
+                        Already Registered? <NavLink to="/login">Login</NavLink>
                     </div>
                 </div>
             </div>

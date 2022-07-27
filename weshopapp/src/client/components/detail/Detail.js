@@ -449,16 +449,16 @@ const DetailMiddle = ({
     return (
         <div className="description-review">
             <ul className="title-header">
-                <li onClick={() => toogleDescReview('description')} className={`${descReviewState == 'description' ? 'active' : ''}`}>
+                <li onClick={() => toogleDescReview('description')} className={`${descReviewState === 'description' ? 'active' : ''}`}>
                     <h4>Description</h4>
                 </li>
-                <li onClick={() => toogleDescReview('review')} className={`${descReviewState == 'review' ? 'active' : ''}`}>
+                <li onClick={() => toogleDescReview('review')} className={`${descReviewState === 'review' ? 'active' : ''}`}>
                     <h4>Reviews ({reviews.length})</h4>
                 </li>
             </ul>
             <div className="desc-reviews-body">
                 {
-                    descReviewState == 'description' ? (<Description productDetail={productDetail}/>) : (
+                    descReviewState === 'description' ? (<Description productDetail={productDetail}/>) : (
                     <Reviews 
                         reviews={reviews} setProductReviews={setProductReviews} submitReview={submitReview}
                         title={title} setTitle={setTitle} setStars={setStars} stars={stars} productReviews={productReviews}
@@ -546,7 +546,7 @@ const UserReviews = ({review, deleteReview, modalToggle}) => {
                         <div className="review-date">
                             {date}
                             {
-                                user._id == current_user._id && (
+                                user._id === current_user._id && (
                                     <FontAwesomeIcon onClick={() => modalToggle(true, review._id)} className="review-delete"  icon={faTrashCan} />
                                 )
                             }
@@ -584,7 +584,7 @@ const ReviewForm = ({
         setActiveStars(action.index)
         setStars(activeStars + 1)
 
-        if(action == false && isClicked){
+        if(action === false && isClicked){
             setStars(isClicked.index + 1)
             setActiveStars(isClicked.index + 1)
         }else{
@@ -592,7 +592,7 @@ const ReviewForm = ({
             setStars(action.index + 1)
         }
        
-        if(!isClicked && action == false && stars > 0){
+        if(!isClicked && action === false && stars > 0){
             setStars(0)
         }
     }

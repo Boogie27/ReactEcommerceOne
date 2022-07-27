@@ -44,7 +44,7 @@ const today = () => {
 }
 
 
-const profile_img = (string) => {
+const profile_img = (string, gender) => {
     return 'asset/client/users/profile-image/' + string
 }
 
