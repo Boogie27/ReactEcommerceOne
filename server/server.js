@@ -3,15 +3,19 @@ const mongoose = require('mongoose')
 const app = express()
 const PORT = 3001
 const cors = require('cors')
+const cookieParser = require('cookie-parser');
 const USER_MODEL = require('./models/users')
 const PRODUCT_MODEL = require('./models/products')
 const PRODUCT_REVIEW_MODEL = require('./models/reviews')
 
 const userRoute = require('./routes/userRoute') 
+const getUserRoute = require('./routes/getUserRoute') 
+
 require('dotenv').config()
 
 
 app.use(express.json())
+app.use(cookieParser("secret"))
 app.use(cors())
 
 
@@ -140,6 +144,9 @@ app.use('/api/users', userRoute)
 
 // register user
 app.use('/api/register-user', userRoute)
+
+// get loggedin user
+app.use('/api/get-auth-user', getUserRoute)
 
 
 

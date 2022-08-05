@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { NavLink, useSearchParams, useNavigate   } from 'react-router-dom'
+import { NavLink, useSearchParams  } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { 
     faKey,
@@ -11,7 +11,6 @@ import {
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Axios from 'axios'
-import Cookies from 'js-cookie'
 import { 
     url, 
     today, 
@@ -25,7 +24,6 @@ import AlertDanger from '../alerts/AlertDanger'
 
 
 const Register = () => {
-    const navigate = useNavigate();
     const [alert, setAlert] = useState('')
     const [input, setInput] = useState(null)
     const [gender, setGender] = useState('male')
@@ -60,37 +58,31 @@ const Register = () => {
         }
 
         // validate input fields
-        const validate = validate_input(user)
-        if(validate === 'failed') return
+        // const validate = validate_input(user)
+        
+        // if(validate === true){
+        //     // Axios.post(url('/api/register-user'), user).then((response) => {
+        //     //     console.log(response.data)
+        //     // })
+        //     console.log("ues")
+        // }
 
         Axios.post(url('/api/register-user'), user).then((response) => {
-            setAlert('')
-            setEmailAlert('')
-            setUsernameAlert('')
-            setPasswordAlert('')
-            setConfirmPasswordAlert('')
-            const data = response.data
-            
-            if(data.validationError){
-                validateFromBackend(data.validation)
-            }else{
-                if(data === 'exists'){
-                    return setAlert('User already exists!')
+                const data = response.data
+                if(data.validationError){
+                    validateFromBackend(data.validation)
+                }else{
+                    if(data === 'exists'){
+                        setAlert('User already exists!')
+                    }
                 }
-                if(data.data === 'success'){
-                    Cookies.set('weshopappuser', data.token, { expires: 1 })
-                    return navigate("/")
-                }
-                
-            }
-        })
+            })
     }
 
 
 
 
     const validate_input = (input) => {
-        setAlert('')
         setEmailAlert('')
         setUsernameAlert('')
         setPasswordAlert('')
@@ -122,13 +114,13 @@ const Register = () => {
         if(input.confirmPassword === ""){
             setConfirmPasswordAlert("*Confirm passowrd field is required")
         }else if(input.confirmPassword !== input.password){
-            setConfirmPasswordAlert("*Confirm password Must equals password")
+            setConfirmPasswordAlert("*Confirm password Must equalls password")
         }
 
         if(usernameAlert.length || emailAlert.length || passwordAlert.length || confirmPasswordAlert.length){
-            return 'failed'
+            return true
         }else{
-            return 'success'
+            return false
         }
     }
 
@@ -138,13 +130,13 @@ const Register = () => {
         if(error.email){
             setEmailAlert(error.email)
         }
-        if(error.username){
+        if(error.email){
             setUsernameAlert(error.username)
         }
-        if(error.password){
+        if(error.email){
             setPasswordAlert(error.password)
         }
-        if(error.confirmPassword){
+        if(error.email){
             setConfirmPasswordAlert(error.confirmPassword)
         }
     }

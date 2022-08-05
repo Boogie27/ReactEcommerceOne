@@ -21,6 +21,9 @@ const UserSchema  = new mongoose.Schema({
         type: String,
         required: false
     },
+    token: {
+        type: String,
+    },
     gender: {
         type: String,
         required: false

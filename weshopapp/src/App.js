@@ -11,15 +11,17 @@ import Register from './client/components/auth/Register'
 import Navigation from './client/components/navigation/Navigation'
 import MiniNavigation from './client/components/navigation/MiniNavigation'
 import Axios from 'axios'
-import { current_user } from './client/Data'
+import Cookies from 'js-cookie'
+import {  url } from './client/Data'
 
 
 
 
 function App() {
-  const [user, setUser] = useState(current_user)
+  const [user, setUser] = useState(false)
   const [appState, setAppState] = useState(false)
   const [sideNavi, setSideNavi] = useState(false)
+  const [isLoggedin, setIsLoggedin ] = useState(false)
   const [mobileSearch, setMobileSearch] = useState(false)
  
 
@@ -29,7 +31,11 @@ function App() {
 
 
   const toggleAppState = () => {
-      setAppState(!appState)
+    const token = Cookies.get('weshopappuser')
+    if(user && token){
+      // change user theme here
+    }
+    return setAppState(!appState)
   }
 
 
@@ -41,6 +47,8 @@ function App() {
    
   useEffect(() => {
     userAppState(user)
+
+    getLoggedinUser() //get auth user
   }, [])
 
 
@@ -53,6 +61,22 @@ function App() {
       setAppState(true)
     }
   }
+  
+
+  const getLoggedinUser = () => {
+    const token = Cookies.get('weshopappuser')
+    if(token) {
+      Axios.post(url('/api/get-auth-user'), { token: token }).then((response) => {
+        const authUser = response.data
+        if(authUser){
+          setUser(authUser)
+          return userAppState(authUser)
+        }
+      })
+    }
+    return setAppState(false)
+  }
+
 
 
   return (

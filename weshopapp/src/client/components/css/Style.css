@@ -2137,10 +2137,16 @@ span.css-1xdhyk6 span{
 .auth-left img{
     width: 400px;
 }
+.auth-right .title-header{
+    width: 80%;
+    margin-bottom: 10px;
+}
 .auth-right .title-header h3{
+    margin: 0px;
     font-weight: bold;
 }
 .auth-right .title-header p{
+    margin: 0px;
     color: rgb(168, 168, 168);
 }
 .auth-form .form-group-input{

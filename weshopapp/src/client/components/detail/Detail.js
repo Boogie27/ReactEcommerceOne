@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { NavLink, useSearchParams  } from 'react-router-dom'
+import React, { useState, useEffect  } from 'react'
+import { NavLink, useSearchParams, useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { 
     faPen,
@@ -41,6 +41,7 @@ import QuickView from '../quickview/QuickView'
 
 
 const Detail = () => {
+    const navigate = useNavigate()
     const [searchParams] = useSearchParams();
     const product_id = searchParams.get('product')
     const category = searchParams.get('category')
@@ -110,7 +111,6 @@ const Detail = () => {
         setStarsAlert('')
         setTitleAlert('')
         setReviewsAlert('')
-
         if(title == ''){
             setIsSubmit(false)
             setTitleAlert('Title field is required!')
