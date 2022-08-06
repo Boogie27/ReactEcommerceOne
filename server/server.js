@@ -143,10 +143,10 @@ app.get('/user', async (request, response) => {
 app.use('/api/users', userRoute)
 
 // register user
-app.use('/api/register-user', userRoute)
+app.use(userRoute)
 
 // get loggedin user
-app.use('/api/get-auth-user', getUserRoute)
+// app.use('/api/get-auth-user', getUserRoute)
 
 
 

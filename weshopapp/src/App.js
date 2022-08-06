@@ -34,6 +34,9 @@ function App() {
     const token = Cookies.get('weshopappuser')
     if(user && token){
       // change user theme here
+      Axios.post(url('/api/user-theme-change'), user).then((response) => {
+        console.log(response.data)
+      })
     }
     return setAppState(!appState)
   }
@@ -78,12 +81,28 @@ function App() {
   }
 
 
+  //logout user
+  const logoutUser = (e) => {
+    e.preventDefault()
+    const token = Cookies.get('weshopappuser')
+    if(user && token){
+      Axios.get(url(`/api/logout?id=${user._id}`)).then((response) => {
+        if(response.data){
+          setUser(false)
+          //set logout success message
+          Cookies.set('weshopappuser', '', { expires: new Date(0) })
+        }
+      })
+    }
+  }
+
+
 
   return (
     <div className={`parent-container ${appState && 'active'}`}>
       <div className="parent-nav-container">
-        <Navigation appState={appState} sideNavToggle={sideNavToggle} toggleSearch={toggleSearch} mobileSearch={mobileSearch} sideNavi={sideNavi} toggleAppState={toggleAppState}/>
-        <MiniNavigation />
+        <Navigation  appState={appState} sideNavToggle={sideNavToggle} toggleSearch={toggleSearch} mobileSearch={mobileSearch} sideNavi={sideNavi} toggleAppState={toggleAppState}/>
+        <MiniNavigation user={user} logoutUser={logoutUser}/>
       </div>
       <Routes>
           <Route path="/" element={<Home appState={appState} />}/>

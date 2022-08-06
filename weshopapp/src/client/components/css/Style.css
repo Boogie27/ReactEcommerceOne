@@ -2145,6 +2145,9 @@ span.css-1xdhyk6 span{
     margin: 0px;
     font-weight: bold;
 }
+.parent-container.active .auth-right .title-header h3{
+    color: #ccc;
+}
 .auth-right .title-header p{
     margin: 0px;
     color: rgb(168, 168, 168);
@@ -2200,7 +2203,13 @@ span.css-1xdhyk6 span{
     justify-content: space-between;
 }
 .login-link a{
-    font-weight: 500;
+    font-weight: 600;
+}
+.parent-container.active .login-link{
+    color: #ccc;
+}
+.parent-container.active .login-link a{
+    color: rgb(224, 157, 32);
 }
 .login-link a:hover{
     color: rgb(224, 157, 32);
@@ -2212,6 +2221,9 @@ span.css-1xdhyk6 span{
 .gender-container .form-gender{
     margin-right: 20px;
     display: flex;
+}
+.parent-container.active .gender-container .form-gender label{
+    color: #ccc;
 }
 .gender-container .form-gender input{
     cursor: pointer;

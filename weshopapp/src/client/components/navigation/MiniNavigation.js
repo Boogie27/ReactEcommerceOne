@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 
 
 
-const MiniNavigation = () => {
+const MiniNavigation = ({user, logoutUser}) => {
     return (
         <div className="mini-navi-container">
             <div className="inner-mini-nav">
@@ -14,8 +14,14 @@ const MiniNavigation = () => {
                         <li><NavLink to="/detail">CONTACT</NavLink></li>
                         <li><NavLink to="/special">SPECIAL</NavLink></li>
                         <li><NavLink to="/wishlist">WISHLIST</NavLink></li>
-                        <li><NavLink to="/register">REGISTER</NavLink></li>
-                        <li><NavLink to="/login">LOGIN</NavLink></li>
+                        { user ? (
+                            <li><NavLink to="/logout" onClick={(e) => logoutUser(e)}>LOGOUT</NavLink></li>
+                        ) : (
+                            <>
+                                <li><NavLink to="/register">REGISTER</NavLink></li>
+                                <li><NavLink to="/login">LOGIN</NavLink></li>
+                            </>
+                        ) }
                     </ul>
                 </div>
             </div>
