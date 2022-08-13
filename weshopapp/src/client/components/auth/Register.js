@@ -24,7 +24,7 @@ import AlertDanger from '../alerts/AlertDanger'
 
 
 
-const Register = () => {
+const Register = ({alertMessage, setUser, isLoading, setIsLoading}) => {
     const navigate = useNavigate();
     const [alert, setAlert] = useState('')
     const [input, setInput] = useState(null)
@@ -63,6 +63,7 @@ const Register = () => {
         const validate = validate_input(user)
         if(validate === 'failed') return
 
+        setIsLoading({state: true, text: 'Creating account, Please wait...'})
         Axios.post(url('/api/register-user'), user).then((response) => {
             setAlert('')
             setEmailAlert('')
@@ -72,17 +73,22 @@ const Register = () => {
             const data = response.data
             
             if(data.validationError){
+                setIsLoading({state: false, text: ''})
                 validateFromBackend(data.validation)
             }else{
                 if(data === 'exists'){
+                    setIsLoading({state: false, text: ''})
                     return setAlert('User already exists!')
                 }
                 if(data.data === 'success'){
-                    Cookies.set('weshopappuser', data.token, { expires: 1 })
+                    setUser(data.user)
+                    setIsLoading({state: false, text: ''})
+                    alertMessage("Account created successfully!", 5000)
+                    Cookies.set('weshopappuser', data.user.token, { expires: 1 })
                     return navigate("/")
                 }
-                
             }
+            setIsLoading({state: false, text: ''})
         })
     }
 
@@ -90,42 +96,48 @@ const Register = () => {
 
 
     const validate_input = (input) => {
-        setAlert('')
-        setEmailAlert('')
-        setUsernameAlert('')
-        setPasswordAlert('')
-        setConfirmPasswordAlert('')
+        let failed = false
 
         const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
         if(input.email === ""){
+            failed = true
             setEmailAlert("*Email field is required")
         } else if(!input.email.match(validRegex)){
+            failed = true
             setEmailAlert("*Invalid email address")
         }
 
         if(input.username === ""){
+            failed = true
             setUsernameAlert("*Username field is required")
         }else if(input.username.length < 3){
+            failed = true
             setUsernameAlert("*Must be minimum of 3 characters")
         }else if(input.username.length > 50){
+            failed = true
             setUsernameAlert("*Must be maximum of 50 characters")
         }
 
         if(input.password === ""){
+            failed = true
             setPasswordAlert("*Passowrd field is required")
         }else if(input.password.length < 6){
+            failed = true
             setPasswordAlert("*Must be minimum of 6 characters")
         }else if(input.password.length > 12){
+            failed = true
             setPasswordAlert("*Must be maximum of 12 characters")
         }
 
         if(input.confirmPassword === ""){
+            failed = true
             setConfirmPasswordAlert("*Confirm passowrd field is required")
         }else if(input.confirmPassword !== input.password){
+            failed = true
             setConfirmPasswordAlert("*Confirm password Must equals password")
         }
 
-        if(usernameAlert.length || emailAlert.length || passwordAlert.length || confirmPasswordAlert.length){
+        if(failed == true){
             return 'failed'
         }else{
             return 'success'
@@ -172,7 +184,7 @@ export default Register
 const LeftSide = () => {
     return (
         <div className="auth-left">
-            <img src={auth_img('1.png')} alt="auth-pic"/>
+            <img src={auth_img('1.png')} alt="authPic"/>
         </div>
     )
 }

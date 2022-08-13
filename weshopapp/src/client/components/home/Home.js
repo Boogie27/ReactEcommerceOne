@@ -49,7 +49,6 @@ const categories = [
 
 
 const Home = ({appState}) => {
-
   const [product, setProduct] = useState(null)
   const [latestProducts, setLatestProducts] = useState([])
   const [featuredProducts, setFeaturedProducts] = useState([])

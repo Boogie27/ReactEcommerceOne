@@ -36,6 +36,9 @@ const url = (string) => {
 }
 
 
+
+
+
 const money = (money) => {
     return '£' + money
 }
@@ -47,8 +50,18 @@ const today = () => {
 }
 
 
-const profile_img = (string, gender) => {
-    return 'asset/client/users/profile-image/' + string
+const profile_img = (string = null, gender = null) => {
+    let image = ''
+    if(!string && gender == 'female'){
+        image = 'avatar/2.png'
+    }
+    if(!string && gender == 'male'){
+        image = 'avatar/1.png'
+    }
+    if(string){
+        image = 'profile-image/' + string
+    }
+    return 'asset/client/users/' + image
 }
 
 
@@ -66,6 +79,10 @@ const auth_img = (string) => {
     return 'asset/client/auth/' + string
 }
 
+const loader_img = (string) => {
+    return 'asset/preloader/' + string
+}
+
 
 
 
@@ -77,6 +94,7 @@ export {
     today,
     auth_img,
     moneySign,
+    loader_img,
     current_user,
     userImageURL,
     category_img,

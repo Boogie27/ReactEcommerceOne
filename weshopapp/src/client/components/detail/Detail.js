@@ -21,7 +21,6 @@ import {
     today,
     moneySign, 
     userImageURL, 
-    current_user,
     category_img,
     product_img,
     profile_img,
@@ -40,7 +39,7 @@ import QuickView from '../quickview/QuickView'
 
 
 
-const Detail = () => {
+const Detail = ({user}) => {
     const navigate = useNavigate()
     const [searchParams] = useSearchParams();
     const product_id = searchParams.get('product')
@@ -67,7 +66,7 @@ const Detail = () => {
     const [relatedProducts, setRelatedProducts] = useState([])
     const [product, setProduct] = useState(null)
 
-
+console.log()
     useEffect(() => {
         // fetch product detail
         fetchProductDetail(product_id)
@@ -80,8 +79,8 @@ const Detail = () => {
 
         // fetch related products
         fetchRelatedProducts(category)
+        
     }, [])
-
     
     const fetchProductDetail = (product_id) => {
         Axios.get(url(`/detail?product=${product_id}`)).then((response) => {
@@ -129,7 +128,7 @@ const Detail = () => {
                 title: title,
                 product_id: product_id,
                 reviews: productReviews,
-                user_id: current_user._id,
+                user_id: user._id,
                 created_at: today(),
             }).then((response) => {
                 setIsSubmit(false)
@@ -233,7 +232,7 @@ const Detail = () => {
                 productDetail ? (
                     <>
                         <DetailTop reviews={reviews} productDetail={productDetail}  starsCount={starsCount}/>
-                        <DetailMiddle 
+                        <DetailMiddle user={user}
                             productDetail={productDetail} modalToggle={modalToggle}
                             reviews={reviews} stars={stars} productReviews={productReviews}
                             reviews={reviews} setProductReviews={setProductReviews} isSubmit={isSubmit}
@@ -438,7 +437,7 @@ const DetailMiddle = ({
     reviews, isSubmit, starsAlert, setProductReviews, title, 
     setTitle, setStars, stars, productReviews, submitReview,
     titleAlert, reviewsAlert,  activeStars, setActiveStars,
-    deleteReview, productDetail, modalToggle
+    deleteReview, productDetail, modalToggle, user
     }) => {
     const [descReviewState, setDescReviewState] = useState('description')
 
@@ -464,7 +463,7 @@ const DetailMiddle = ({
                         title={title} setTitle={setTitle} setStars={setStars} stars={stars} productReviews={productReviews}
                         isSubmit={isSubmit} starsAlert={starsAlert} titleAlert={titleAlert} reviewsAlert={reviewsAlert}
                         activeStars={activeStars} setActiveStars={setActiveStars} deleteReview={deleteReview}
-                        modalToggle={modalToggle}
+                        modalToggle={modalToggle} user={user}
                     />)
                 }
             </div>
@@ -490,7 +489,7 @@ const Description = ({productDetail}) => {
 const Reviews = ({
     reviews, starsAlert, setProductReviews, isSubmit, title, setTitle, 
     setStars, stars, productReviews, submitReview, titleAlert, reviewsAlert,
-    activeStars, setActiveStars, deleteReview, modalToggle
+    activeStars, setActiveStars, deleteReview, modalToggle, user
     }) => {
     return (
         <div className="reviews-container">
@@ -502,7 +501,7 @@ const Reviews = ({
                         }
                         
                         {
-                            reviews.map((review, index) => <UserReviews key={index} modalToggle={modalToggle} deleteReview={deleteReview} review={review}/>)
+                            reviews.map((review, index) => <UserReviews key={index} modalToggle={modalToggle} user={user} deleteReview={deleteReview} review={review}/>)
                         }
                         
                     </div>
@@ -529,24 +528,24 @@ const Reviews = ({
 
 
 
-const UserReviews = ({review, deleteReview, modalToggle}) => {
+const UserReviews = ({review, user, deleteReview, modalToggle}) => {
     const date = Moment(review.created_at).format('MMM Do YY')
     const stars = Array(5).fill(0)
-    const user = review.user
+    const member = review.user
 
     return (
         <div className="user-reviews">
-            <div className={`user-review-img ${user.is_active ? 'online' : 'offline'}`}>
-                <img src={profile_img(user.image)} alt=""/>
+            <div className={`user-review-img ${member.is_active ? 'online' : 'offline'}`}>
+                <img src={profile_img(member.image, member.gender)} alt=""/>
             </div>
             <div className="user-reviews-p">
                 <ul>
                     <li className="title-header">
-                        <h4>{user.user_name}</h4>
+                        <h4>{member.user_name}</h4>
                         <div className="review-date">
                             {date}
                             {
-                                user._id === current_user._id && (
+                                member._id === user._id && (
                                     <FontAwesomeIcon onClick={() => modalToggle(true, review._id)} className="review-delete"  icon={faTrashCan} />
                                 )
                             }

@@ -76,7 +76,7 @@ app.get('/reviews', async (request, response) => {
     let product_id = request.query.product_id
     const reviews = await PRODUCT_REVIEW_MODEL.find({product_id: product_id}).populate(
         'user',
-        'first_name last_name image is_active'
+        'first_name last_name image gender is_active'
       )
       return response.json({ reviews });
 })

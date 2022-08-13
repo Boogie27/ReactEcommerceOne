@@ -47,7 +47,7 @@ const registerUser = AsyncHandler(async (request, response) => {
             httpOnly: true, // The cookie only accessible by the web server
             signed: true // Indicates if the cookie should be signed
         }
-        return response.cookie('weshopapp', token, options).send({data: 'success', token: token})
+        return response.cookie('weshopapp', token, options).send({data: 'success', user: createUser})
     }else{
         response.status(400)
         throw new Error("User Not Created")
@@ -180,8 +180,60 @@ const logoutUser = AsyncHandler( async (request, response) => {
 
 
 
+const loginUser = AsyncHandler( async (request, response) => {
+    // validate input
+    const { email, password } = request.body
+    const validation = loginValidateInput(request.body)
+    if(validation){
+        return response.json({ validationError: true, validation})
+    }
+
+    const exists = await User.findOne({ email: email })
+    if(!exists){
+        return response.send(false)
+    }
+    
+    // compare password
+    const comparePassword = await bcrypt.compare(password, exists.password)
+    if(!comparePassword){
+        return response.send(false)
+    }
+    let options = {
+        maxAge: 1000 * 60 * 60 * 24, // would expire after on day
+        httpOnly: true, // The cookie only accessible by the web server
+        signed: true // Indicates if the cookie should be signed
+    }
+    return response.cookie('weshopapp', exists.token, options).send({data: 'success', user: exists})
+})
 
 
+
+// validate user input
+const loginValidateInput = (input) => {
+    let email = ''
+    let password = ''
+    
+    const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    if(input.email == ""){
+        email = "*Email field is required"
+    } else if(!input.email.match(validRegex)){
+        email = "*Invalid email address"
+    }
+
+    if(input.password == ""){
+        password = "*Passowrd field is required"
+    }else if(input.password.length < 6){
+        password = "*Must be minimum of 6 characters"
+    }else if(input.password.length > 12){
+        password = "*Must be maximum of 12 characters"
+    }
+
+    if(email.length || password.length){
+        return {email: email, password: password}
+    }else{
+        return false
+    }
+}
 
 
 
@@ -189,6 +241,7 @@ const logoutUser = AsyncHandler( async (request, response) => {
 
 module.exports = { 
     getUser,
+    loginUser,
     logoutUser,
     registerUser,
     changeUserTheme
