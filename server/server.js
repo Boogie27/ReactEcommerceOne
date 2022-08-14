@@ -94,6 +94,10 @@ app.get('/related-products', async (request, response) => {
 app.post('/submit-review', async (request, response) => {
     const object = request.body
     const check = await PRODUCT_REVIEW_MODEL.findOne({user: object.user_id, product_id: object.product_id}).exec()
+    const user = await USER_MODEL.findOne({_id: object.user_id}).exec()
+    if(!user){
+        return response.send('no user')
+    }
     if(check){
         return response.send('reviewed')
     }

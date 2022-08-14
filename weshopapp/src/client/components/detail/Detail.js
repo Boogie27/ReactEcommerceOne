@@ -122,6 +122,11 @@ console.log()
             setIsSubmit(false)
             setStarsAlert('Select stars rating')
         }
+        // if(!user){
+        //     setIsSubmit(false)
+        //     return notify_error("Register or Login to review this product!")
+        // }
+
         if(title && productReviews && stars){
             Axios.post(url('/submit-review'), {
                 stars: stars,
@@ -132,6 +137,13 @@ console.log()
                 created_at: today(),
             }).then((response) => {
                 setIsSubmit(false)
+                if(response.data == 'no user'){
+                    setStars(0)
+                    setTitle('')
+                    setActiveStars(0)
+                    setProductReviews('')
+                    return notify_error("Register or Login to review this product!")
+                }
                 if(response.data == 'success'){
                     setStars(0)
                     setTitle('')

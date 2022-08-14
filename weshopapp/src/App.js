@@ -16,11 +16,12 @@ import {  url } from './client/Data'
 import AlertDanger from './client/components/alerts/AlertDanger'
 import AlertSuccess from './client/components/alerts/AlertSuccess'
 import Preloader from './client/components/preloader/Preloader'
-
+import LogoutDropDown from './client/components/dropdown/LogoutDropDown'
 
 function App() {
   const [user, setUser] = useState(false)
   const [message, setMessage] = useState(false)
+  const [logoutModal, setLogoutModal] = useState(false)
   const [appState, setAppState] = useState(false)
   const [sideNavi, setSideNavi] = useState(false)
   const [isLoggedin, setIsLoggedin ] = useState(false)
@@ -113,6 +114,19 @@ function App() {
         setMessage('')
       }, time)
   }
+
+
+  // open or close modal
+  const modalToggle = (action = false, string = null) => {
+    setLogoutModal(action)
+  }
+
+
+  //logout user
+  const logoutUserModal = (e) => {
+    setLogoutModal(false)
+    logoutUser(e)
+  }
  
 
 
@@ -121,7 +135,7 @@ function App() {
     <div className={`parent-container ${appState && 'active'}`}>
       <div className="parent-nav-container">
         <Navigation  appState={appState} sideNavToggle={sideNavToggle} toggleSearch={toggleSearch} mobileSearch={mobileSearch} sideNavi={sideNavi} toggleAppState={toggleAppState}/>
-        <MiniNavigation user={user} logoutUser={logoutUser}/>
+        <MiniNavigation user={user} modalToggle={modalToggle}/>
         {message && <AlertSuccess alert={message}/>}
       </div>
       <Routes>
@@ -132,6 +146,7 @@ function App() {
       </Routes>
       <Footer/>
       { isLoading.state && <Preloader text={isLoading.text}/> }
+      {logoutModal && <LogoutDropDown modalToggle={modalToggle} logoutUserModal={logoutUserModal} user={user}/>}
     </div>
   );
 }
