@@ -84,12 +84,15 @@ const loader_img = (string) => {
 }
 
 
-
+const name = (string) =>{
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
 
 
 export {
     url,
     logo, 
+    name,
     money,
     today,
     auth_img,

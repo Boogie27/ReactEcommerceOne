@@ -2302,6 +2302,15 @@ span.css-1xdhyk6 span{
     color: #fff;
     background-color: #333;
 }
+.parent-container.active .logout-button button.cancel{
+    color: #fff;
+    border: 1px solid rgb(99, 99, 99);
+}
+.parent-container.active .logout-modal p,
+.parent-container.active .logout-modal .title-header h3
+{
+    color: #ccc;
+}
 @media only screen and (max-width: 567px){
     .logout-button button{
         width: 100px

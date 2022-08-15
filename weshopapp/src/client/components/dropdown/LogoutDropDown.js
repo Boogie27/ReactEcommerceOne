@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { 
     faXmark,
 } from '@fortawesome/free-solid-svg-icons'
-
+import {  url, name } from '../../Data'
 
 
 const LogoutDropDown = ({username, logoutUserModal, modalToggle}) => {
@@ -16,7 +16,7 @@ const LogoutDropDown = ({username, logoutUserModal, modalToggle}) => {
                         <div className="title-header">
                             <h3>Logout user?</h3>
                         </div>
-                        <p><b>{username}</b>, Are you sure you want to logout?</p>
+                        <p>{username ? (<b>{name(username)}, </b>) : ''} are you sure you want to logout?</p>
                         <div className="logout-button">
                             <button type="button" onClick={(e) => logoutUserModal(e)} className="logout">Logout</button>
                             <button type="button" onClick={() => modalToggle(false, null)}className="cancel">Close</button>

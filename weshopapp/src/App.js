@@ -12,7 +12,7 @@ import Navigation from './client/components/navigation/Navigation'
 import MiniNavigation from './client/components/navigation/MiniNavigation'
 import Axios from 'axios'
 import Cookies from 'js-cookie'
-import {  url } from './client/Data'
+import {  url, name } from './client/Data'
 import AlertDanger from './client/components/alerts/AlertDanger'
 import AlertSuccess from './client/components/alerts/AlertSuccess'
 import Preloader from './client/components/preloader/Preloader'
@@ -53,8 +53,8 @@ function App() {
 
    
   useEffect(() => {
-    userAppState(user)
     getLoggedinUser() //get auth user
+    userAppState(user)
   }, [])
 
 
@@ -146,7 +146,7 @@ function App() {
       </Routes>
       <Footer/>
       { isLoading.state && <Preloader text={isLoading.text}/> }
-      {logoutModal && <LogoutDropDown modalToggle={modalToggle} logoutUserModal={logoutUserModal} user={user}/>}
+      {logoutModal && <LogoutDropDown modalToggle={modalToggle} logoutUserModal={logoutUserModal} username={user.user_name}/>}
     </div>
   );
 }

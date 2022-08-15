@@ -10,6 +10,7 @@ const PRODUCT_REVIEW_MODEL = require('./models/reviews')
 
 const userRoute = require('./routes/userRoute') 
 const getUserRoute = require('./routes/getUserRoute') 
+const productRoute = require('./routes/productRoute') 
 
 require('dotenv').config()
 
@@ -152,7 +153,8 @@ app.use(userRoute)
 // get loggedin user
 // app.use('/api/get-auth-user', getUserRoute)
 
-
+// product route
+app.use(productRoute)
 
 
 app.listen(PORT, () => {

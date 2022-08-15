@@ -8,6 +8,10 @@ const {
     changeUserTheme
 } = require('../controllers/userController')
 
+
+
+
+
 router.post('/api/get-auth-user', getUser)
 router.post('/api/register-user', registerUser)
 router.post('/api/user-theme-change', changeUserTheme)

@@ -16,6 +16,7 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Axios from 'axios'
 import Moment from 'moment';
+import Cookies from 'js-cookie'
 import { 
     url, 
     today,
@@ -32,7 +33,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ModalDropDown } from '../dropdown/ModalDropDown'
 import RelatedProducts from './RelatedProducts'
 import QuickView from '../quickview/QuickView'
-
+import Preloader from '../preloader/Preloader'
 
 
 
@@ -44,7 +45,10 @@ const Detail = ({user}) => {
     const [searchParams] = useSearchParams();
     const product_id = searchParams.get('product')
     const category = searchParams.get('category')
+    const [isLoggedin, setIsLoggedin ] = useState(true)
 
+    const [likes, setLikes] = useState(null)
+    const [disLikes, setDisLikes] = useState(null)
     const [productDetail, setProductDetail] = useState(null)
     const [description, setDescription] = useState('')
     const [userReviews, setUserReviews] = useState('')
@@ -66,8 +70,11 @@ const Detail = ({user}) => {
     const [relatedProducts, setRelatedProducts] = useState([])
     const [product, setProduct] = useState(null)
 
-console.log()
+
     useEffect(() => {
+        // remove loader
+        setIsLoggedin(false)
+
         // fetch product detail
         fetchProductDetail(product_id)
 
@@ -79,8 +86,11 @@ console.log()
 
         // fetch related products
         fetchRelatedProducts(category)
+
+        // get product likes
+        fetchProductLikes(product_id)
         
-    }, [])
+    }, [product_id])
     
     const fetchProductDetail = (product_id) => {
         Axios.get(url(`/detail?product=${product_id}`)).then((response) => {
@@ -100,6 +110,15 @@ console.log()
         Axios.get(url(`/related-products?category=${category}`)).then((response) => {
             setRelatedProducts(response.data.relatedProducts)
         })
+    }
+
+    // fetch product likes
+    const fetchProductLikes = (product_id) => {
+        Axios.get(url(`/api/product-likes/${product_id}`)).then((response) => {
+            setLikes(response.data.likes)
+            setDisLikes(response.data.dislike)
+        })
+        
     }
     
 
@@ -122,10 +141,10 @@ console.log()
             setIsSubmit(false)
             setStarsAlert('Select stars rating')
         }
-        // if(!user){
-        //     setIsSubmit(false)
-        //     return notify_error("Register or Login to review this product!")
-        // }
+        if(!user){
+            setIsSubmit(false)
+            return notify_error("Register or Login to review this product!")
+        }
 
         if(title && productReviews && stars){
             Axios.post(url('/submit-review'), {
@@ -238,40 +257,61 @@ console.log()
         setProduct(null)
     }
 
+    
+    const likeToggle = (action) => {
+        if(!user){
+            let text = action ? 'like' : 'dislike'
+            return notify_error('Login or Register to '+text+' this product!')
+        }
+
+        Axios.post(url('/api/product-like-toggle'), { action: action, user_id: user._id, product_id: product_id}).then((response) => {
+                console.log(response.data)
+        })
+    }
+
+
     return (
-        <div className="product-detail-container">
-           {
-                productDetail ? (
-                    <>
-                        <DetailTop reviews={reviews} productDetail={productDetail}  starsCount={starsCount}/>
-                        <DetailMiddle user={user}
-                            productDetail={productDetail} modalToggle={modalToggle}
-                            reviews={reviews} stars={stars} productReviews={productReviews}
-                            reviews={reviews} setProductReviews={setProductReviews} isSubmit={isSubmit}
-                            title={title} setTitle={setTitle} setStars={setStars} submitReview={submitReview}
-                            starsAlert={starsAlert} titleAlert={titleAlert} reviewsAlert={reviewsAlert}
-                            activeStars={activeStars} setActiveStars={setActiveStars} deleteReview={deleteReview}
-                        />
-                        {
-                            relatedProducts.length > 0 ? (
-                                <RelatedProducts relatedProducts={relatedProducts} showQuickView={showQuickView}/>
-                            ) : null
-                        }
-                        
-                        {
-                            isModalOpen && <ModalDropDown isDeleting={isDeleting} deleteReview={deleteReview} modalToggle={modalToggle} />
-                        }
-                        
-                    </>
-                ) : null
-            }
-            <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} 
-                newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover
-            />
-            {
-            product ? (<QuickView product={product} closeQuickView={closeQuickView} />) : null
-            }
-        </div>
+        <>
+            {isLoggedin ? (<Preloader text="Loading, please wait..."/>) : (
+                <div className="product-detail-container">
+                {
+                     productDetail ? (
+                         <>
+                             <DetailTop reviews={reviews} productDetail={productDetail}  starsCount={starsCount}
+                                    disLikes={disLikes} likes={likes} likeToggle={likeToggle}
+                             />
+                             <DetailMiddle user={user}
+                                 productDetail={productDetail} modalToggle={modalToggle}
+                                 reviews={reviews} stars={stars} productReviews={productReviews}
+                                 reviews={reviews} setProductReviews={setProductReviews} isSubmit={isSubmit}
+                                 title={title} setTitle={setTitle} setStars={setStars} submitReview={submitReview}
+                                 starsAlert={starsAlert} titleAlert={titleAlert} reviewsAlert={reviewsAlert}
+                                 activeStars={activeStars} setActiveStars={setActiveStars} deleteReview={deleteReview}
+                                 disLikes={disLikes} likes={likes}
+                             />
+                             {
+                                 relatedProducts.length > 0 ? (
+                                     <RelatedProducts relatedProducts={relatedProducts} showQuickView={showQuickView}/>
+                                 ) : null
+                             }
+                             
+                             {
+                                 isModalOpen && <ModalDropDown isDeleting={isDeleting} deleteReview={deleteReview} modalToggle={modalToggle} />
+                             }
+                             
+                         </>
+                     ) : null
+                 }
+                 <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} 
+                     newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover
+                 />
+                 {
+                 product ? (<QuickView product={product} closeQuickView={closeQuickView} />) : null
+                 }
+             </div>
+            )}
+        </>
+        
     )
 }
 
@@ -286,12 +326,15 @@ export default Detail
 
 
 
-const DetailTop = ({ reviews, productDetail, starsCount }) => {
+const DetailTop = ({ reviews, productDetail, starsCount, disLikes, likes, likeToggle }) => {
     return (
         <div className="detail-img-container">
             <div className="inner-detail-img">
                 <ProductImage images={productDetail.image}/>
-                <ProductDetail reviews={reviews} productDetail={productDetail} starsCount={starsCount}/>
+                <ProductDetail 
+                    reviews={reviews} productDetail={productDetail} starsCount={starsCount}
+                    disLikes={disLikes} likes={likes} likeToggle={likeToggle}
+                />
             </div>
         </div>
     )
@@ -355,7 +398,7 @@ const DirectionButton = () => {
 
 
 
-const ProductDetail = ({ reviews, productDetail, starsCount }) => {
+const ProductDetail = ({ reviews, productDetail, starsCount, disLikes, likes, likeToggle }) => {
     return (
         <div className="product-detail">
            <div className="title-header"><h3>{productDetail.product_name}</h3></div>
@@ -367,7 +410,7 @@ const ProductDetail = ({ reviews, productDetail, starsCount }) => {
                 </ul>
                 <ItemDetail productDetail={productDetail}/>
                 <ProductQuantity/>
-                <WishListAdd/>
+                <WishListAdd likes={likes} disLikes={disLikes} likeToggle={likeToggle}/>
             </div>
         </div>
     )
@@ -429,13 +472,18 @@ const ProductQuantity = () => {
 
 
 
-const WishListAdd = () => {
+const WishListAdd = ({likes, disLikes, likeToggle}) => {
+
     return (
         <div className="icons">
             <ul>
                 <li><FontAwesomeIcon className=""  icon={faHeart} /> Add To Wishlist</li>
-                <li className="thumbs-like"><FontAwesomeIcon  icon={faThumbsUp} /> likes 5</li>
-                <li className="thumbs-dislike"><FontAwesomeIcon  icon={faThumbsDown} /> likes 0</li>
+                <li onClick={() => likeToggle(true)} className="thumbs-like">
+                    <FontAwesomeIcon  icon={faThumbsUp} /> likes {likes.length}
+                </li>
+                <li onClick={() => likeToggle(false)} className="thumbs-dislike">
+                    <FontAwesomeIcon  icon={faThumbsDown} /> likes {disLikes.length}
+                </li>
             </ul>
         </div>
     )
