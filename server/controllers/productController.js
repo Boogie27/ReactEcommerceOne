@@ -21,7 +21,26 @@ const getProductLikes = AsyncHandler(async (request, response) => {
 const ProductLikeToogle = AsyncHandler(async (request, response) => {
     const like = request.body
     
-    return response.send(like)
+    const user = await User.findOne({_id: like.user_id}).exec()
+    if(!user){
+        return response.send('failed')
+    }
+    if(user){
+        const newLikes = {
+            product_id: like.product_id,
+            user: like.user_id,
+            type: like.type,
+            created_at: today()
+        }
+        //   if user has liked ths product, delete the like if not like the product
+
+        //  if type is like then like if dilike then dislike
+        const createLike = await Likes.create(newLikes)
+        if(createLike){
+            return response.send({ data: 'liked', like: createLike})
+        }
+    }
+    return response.send('error')
 })
 
 

@@ -47,8 +47,8 @@ const Detail = ({user}) => {
     const category = searchParams.get('category')
     const [isLoggedin, setIsLoggedin ] = useState(true)
 
-    const [likes, setLikes] = useState(null)
-    const [disLikes, setDisLikes] = useState(null)
+    const [likes, setLikes] = useState([])
+    const [disLikes, setDisLikes] = useState([])
     const [productDetail, setProductDetail] = useState(null)
     const [description, setDescription] = useState('')
     const [userReviews, setUserReviews] = useState('')
@@ -143,6 +143,8 @@ const Detail = ({user}) => {
         }
         if(!user){
             setIsSubmit(false)
+            const current_url = `/detail?product=${product_id}&category=${category}`
+            Cookies.set('current_url', current_url, { expires: 1 })
             return notify_error("Register or Login to review this product!")
         }
 
@@ -181,6 +183,7 @@ const Detail = ({user}) => {
             })
         }
     }
+    
     
 
     const notify_success = (string) => {
@@ -259,13 +262,22 @@ const Detail = ({user}) => {
 
     
     const likeToggle = (action) => {
+        let type = action ? 'like' : 'dislike'
+        const message = 'Login or Register to '+type+' this product!'
         if(!user){
-            let text = action ? 'like' : 'dislike'
-            return notify_error('Login or Register to '+text+' this product!')
+            return notify_error(message)
         }
 
-        Axios.post(url('/api/product-like-toggle'), { action: action, user_id: user._id, product_id: product_id}).then((response) => {
-                console.log(response.data)
+        Axios.post(url('/api/product-like-toggle'), { type: type, user_id: user._id, product_id: product_id }).then((response) => {
+            if(response.data == 'failed'){
+                return notify_error(message)
+            }
+            if(response.data == 'error'){
+                return notify_error('Something went wrong, try again!')
+            }
+            if(response.data.data == 'liked'){
+                // setLikes(response.data.like)
+            }
         })
     }
 

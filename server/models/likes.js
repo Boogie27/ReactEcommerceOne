@@ -7,11 +7,12 @@ const likesSchema  = new mongoose.Schema({
         type: String,
         required: true
     },
-    type: {
-        type: String,
-        required: true
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'users',
     },
-    user_id: {
+    type: {
         type: String,
         required: true
     },
@@ -19,11 +20,6 @@ const likesSchema  = new mongoose.Schema({
         type: Date,
         required: true
     },
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'users',
-      },
 })
 
 

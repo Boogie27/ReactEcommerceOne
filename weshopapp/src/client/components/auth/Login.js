@@ -60,6 +60,10 @@ const Login = ({alertMessage, setUser, isLoading, setIsLoading}) => {
                     alertMessage('Login successfully!', 5000)
                     setIsLoading({state: false, text: ''})
                     Cookies.set('weshopappuser', data.user.token, { expires: 1 })
+                    const old_page = Cookies.get('current_url')
+                    if(old_page){
+                        return navigate(old_page)
+                    }
                     return navigate("/")
                 }
             }
