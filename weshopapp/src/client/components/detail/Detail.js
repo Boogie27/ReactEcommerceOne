@@ -69,6 +69,7 @@ const Detail = ({user}) => {
     const [deleteReviewID, setDeleteReviewID] = useState(null)
     const [relatedProducts, setRelatedProducts] = useState([])
     const [product, setProduct] = useState(null)
+    const [quantity, setQuantity] = useState(1)
 
 
     useEffect(() => {
@@ -264,6 +265,9 @@ const Detail = ({user}) => {
     const likeToggle = (action) => {
         let type = action ? 'like' : 'dislike'
         const message = 'Login or Register to '+type+' this product!'
+        const current_url = `/detail?product=${product_id}&category=${category}`
+        Cookies.set('current_url', current_url, { expires: 1 })
+
         if(!user){
             return notify_error(message)
         }
@@ -275,10 +279,26 @@ const Detail = ({user}) => {
             if(response.data == 'error'){
                 return notify_error('Something went wrong, try again!')
             }
-            if(response.data.data == 'liked'){
-                // setLikes(response.data.like)
-            }
+            fetchProductLikes(product_id)
         })
+    }
+
+
+    const addToCart = () => {
+        let _id = 1
+        const cart = []        
+        const store_item = []
+        store_item['_id'] = '1'
+        store_item['product_id'] = '3'
+        store_item['price'] = '13.00'
+        store_item['quantity'] = '2'
+
+        cart['product'] = [_id = store_item]
+        cart.push([_id = store_item])
+        cart['totalQty'] = '1'
+        cart['totalPrice'] = '13.00'
+
+        console.log(cart)
     }
 
 
@@ -290,7 +310,8 @@ const Detail = ({user}) => {
                      productDetail ? (
                          <>
                              <DetailTop reviews={reviews} productDetail={productDetail}  starsCount={starsCount}
-                                    disLikes={disLikes} likes={likes} likeToggle={likeToggle}
+                                    user={user} disLikes={disLikes} likes={likes} likeToggle={likeToggle}
+                                    setQuantity={setQuantity} quantity={quantity} addToCart={addToCart}
                              />
                              <DetailMiddle user={user}
                                  productDetail={productDetail} modalToggle={modalToggle}
@@ -338,14 +359,18 @@ export default Detail
 
 
 
-const DetailTop = ({ reviews, productDetail, starsCount, disLikes, likes, likeToggle }) => {
+const DetailTop = ({ 
+        user, reviews, productDetail, starsCount, disLikes, likes, likeToggle,
+        setQuantity, quantity, addToCart
+    }) => {
     return (
         <div className="detail-img-container">
             <div className="inner-detail-img">
                 <ProductImage images={productDetail.image}/>
                 <ProductDetail 
+                    setQuantity={setQuantity} quantity={quantity} addToCart={addToCart}
                     reviews={reviews} productDetail={productDetail} starsCount={starsCount}
-                    disLikes={disLikes} likes={likes} likeToggle={likeToggle}
+                    disLikes={disLikes} likes={likes} likeToggle={likeToggle} user={user}
                 />
             </div>
         </div>
@@ -410,7 +435,10 @@ const DirectionButton = () => {
 
 
 
-const ProductDetail = ({ reviews, productDetail, starsCount, disLikes, likes, likeToggle }) => {
+const ProductDetail = ({
+    user, reviews, productDetail, starsCount, disLikes, likes, likeToggle,
+    setQuantity, quantity, addToCart
+    }) => {
     return (
         <div className="product-detail">
            <div className="title-header"><h3>{productDetail.product_name}</h3></div>
@@ -421,8 +449,8 @@ const ProductDetail = ({ reviews, productDetail, starsCount, disLikes, likes, li
                     <li className="li-link"><FontAwesomeIcon className="icon-pen"  icon={faPen} />Write a review</li>
                 </ul>
                 <ItemDetail productDetail={productDetail}/>
-                <ProductQuantity/>
-                <WishListAdd likes={likes} disLikes={disLikes} likeToggle={likeToggle}/>
+                <ProductQuantity addToCart={addToCart} setQuantity={setQuantity} quantity={quantity}/>
+                <WishListAdd user={user} likes={likes} disLikes={disLikes} likeToggle={likeToggle}/>
             </div>
         </div>
     )
@@ -467,13 +495,13 @@ const ItemDetail = ({productDetail}) => {
 
 
 
-const ProductQuantity = () => {
+const ProductQuantity = ({quantity, setQuantity, addToCart}) => {
     return (
         <div className="product-qauntity">
            <div className="productQty">
                <label>Qty</label>
-               <input type="number" min="1"/>
-               <button type="button">ADD TO CART</button>
+               <input type="number" min="1" value={quantity} onChange={(e) => setQuantity(e.target.value)}/>
+               <button onClick={() => addToCart()} type="button">ADD TO CART</button>
            </div>
         </div>
     )
@@ -484,8 +512,7 @@ const ProductQuantity = () => {
 
 
 
-const WishListAdd = ({likes, disLikes, likeToggle}) => {
-
+const WishListAdd = ({user, likes, disLikes, likeToggle}) => {
     return (
         <div className="icons">
             <ul>
@@ -497,6 +524,9 @@ const WishListAdd = ({likes, disLikes, likeToggle}) => {
                     <FontAwesomeIcon  icon={faThumbsDown} /> likes {disLikes.length}
                 </li>
             </ul>
+            { user && likes.length > 1 && (
+                <p className="like-dislike-font">You and {likes.length - 1} other member{likes.length - 1 > 1 ? 's' : ''} <b>like</b> this product</p>
+            ) }
         </div>
     )
 }

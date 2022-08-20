@@ -1797,6 +1797,10 @@ a{
 .detail-reviews .icons ul li.thumbs-dislike{
     background-color: #385795;
 }
+p.like-dislike-font{
+    font-size: 15px;
+    margin: 10px 0px;
+}
 /* ********** DARK MODE ******** */
 .parent-container.active .main-product-img{
     border: none;

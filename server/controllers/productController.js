@@ -26,18 +26,30 @@ const ProductLikeToogle = AsyncHandler(async (request, response) => {
         return response.send('failed')
     }
     if(user){
+        const exists = await Likes.findOne({user: like.user_id, product_id: like.product_id}).exec()
+        if(exists){
+            if(exists.type == 'like' && like.type == 'like'){
+                await Likes.deleteOne({_id: exists._id}).exec()
+            } else if(exists.type == 'dislike' && like.type == 'dislike'){
+                await Likes.deleteOne({_id: exists._id}).exec()
+            }else{
+                await Likes.findOneAndUpdate({_id: exists._id}, {$set: { type: like.type}}).exec()
+            }
+            return response.send('ok')
+        }
+       
+        const likeType = like.type == 'like' ? like.type : 'dislike'
         const newLikes = {
             product_id: like.product_id,
             user: like.user_id,
-            type: like.type,
+            type: likeType,
             created_at: today()
         }
-        //   if user has liked ths product, delete the like if not like the product
-
-        //  if type is like then like if dilike then dislike
+        
         const createLike = await Likes.create(newLikes)
         if(createLike){
-            return response.send({ data: 'liked', like: createLike})
+            const totalLikes = await Likes.find({product_id: like.product_id}).exec()
+            return response.send({ data: likeType, like: createLike, totalLikes: totalLikes })
         }
     }
     return response.send('error')
