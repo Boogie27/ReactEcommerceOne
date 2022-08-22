@@ -234,6 +234,15 @@ a{
     font-size: 30px;
     margin-right: 10px;
 }
+.shopping-cart-icon{
+    position: relative;
+}
+.shopping-cart-icon span.cart-count{
+    top: 0px;
+    right: -10px;
+    font-size: 10px;
+    position: absolute;
+}
 .contact-icon:hover, .contact-text p:hover, .profile-icon:hover, .shopping-cart-icon:hover{
     color:  rgb(224, 157, 32);
 }

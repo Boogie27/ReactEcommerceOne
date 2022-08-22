@@ -1,6 +1,6 @@
 const AlertDanger = ({alert}) => {
     return (
-        <div className="alert-bg-danger text-center">{alert}</div>
+        <div className="alert-bg-danger text-center"><b>{alert}</b></div>
     )
 }
 

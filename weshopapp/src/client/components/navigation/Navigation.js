@@ -18,6 +18,7 @@ import {
 
 
 const Navigation = ({
+    cart,
     appState,
     sideNavi,
     toggleSearch, 
@@ -34,7 +35,7 @@ const Navigation = ({
             <Logo appState={appState} sideNavToggle={sideNavToggle} />
             <Search />
             <Contact appState={appState}/>
-            <Profile appState={appState} toggleSearch={toggleSearch} toggleAppState={toggleAppState}/>
+            <Profile cart={cart} appState={appState} toggleSearch={toggleSearch} toggleAppState={toggleAppState}/>
             {
                 mobileSearch ? (<MobileNavigation toggleSearch={toggleSearch} />) : null
             }
@@ -52,7 +53,7 @@ export default Navigation
 
 
 
-const Logo = ({appState, sideNavToggle}) => {
+const Logo = ({appState, sideNavToggle }) => {
     return (
         <div className={`logo-container ${appState && 'active'}`}>
             <div className="mobile-nav-toggle">
@@ -95,7 +96,7 @@ const Contact = ({appState}) => {
 
 
 
-const Profile = ({toggleSearch, toggleAppState, appState}) => {
+const Profile = ({user, cart, toggleSearch, toggleAppState, appState}) => {
     const toggleIcon = appState ? faToggleOn : faToggleOff
 
     return (
@@ -105,6 +106,7 @@ const Profile = ({toggleSearch, toggleAppState, appState}) => {
             <div className="profile-icon"><FontAwesomeIcon className="icon" icon={faUser} /></div>
             <div className="shopping-cart">
                 <div className="shopping-cart-icon">
+                    { cart.length > 0 ? (<span className="badge bg-warning cart-count">{ cart.length }</span>) : '' }
                     <FontAwesomeIcon className="icon" icon={faCartShopping} />
                 </div>
                 <div className="cart-text">

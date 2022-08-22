@@ -40,7 +40,7 @@ import Preloader from '../preloader/Preloader'
 
 
 
-const Detail = ({user}) => {
+const Detail = ({user, addToCart, alertError, alertMessage}) => {
     const navigate = useNavigate()
     const [searchParams] = useSearchParams();
     const product_id = searchParams.get('product')
@@ -70,6 +70,7 @@ const Detail = ({user}) => {
     const [relatedProducts, setRelatedProducts] = useState([])
     const [product, setProduct] = useState(null)
     const [quantity, setQuantity] = useState(1)
+    const current_url = `/detail?product=${product_id}&category=${category}`
 
 
     useEffect(() => {
@@ -144,7 +145,6 @@ const Detail = ({user}) => {
         }
         if(!user){
             setIsSubmit(false)
-            const current_url = `/detail?product=${product_id}&category=${category}`
             Cookies.set('current_url', current_url, { expires: 1 })
             return notify_error("Register or Login to review this product!")
         }
@@ -265,7 +265,6 @@ const Detail = ({user}) => {
     const likeToggle = (action) => {
         let type = action ? 'like' : 'dislike'
         const message = 'Login or Register to '+type+' this product!'
-        const current_url = `/detail?product=${product_id}&category=${category}`
         Cookies.set('current_url', current_url, { expires: 1 })
 
         if(!user){
@@ -284,21 +283,14 @@ const Detail = ({user}) => {
     }
 
 
-    const addToCart = () => {
-        let _id = 1
-        const cart = []        
-        const store_item = []
-        store_item['_id'] = '1'
-        store_item['product_id'] = '3'
-        store_item['price'] = '13.00'
-        store_item['quantity'] = '2'
 
-        cart['product'] = [_id = store_item]
-        cart.push([_id = store_item])
-        cart['totalQty'] = '1'
-        cart['totalPrice'] = '13.00'
-
-        console.log(cart)
+    const addItemToCart =  () => {
+        if(!user){
+            alertError('Login or Regsiter to proceed!', 3000)
+            Cookies.set('current_url', current_url, { expires: 1 })
+            return navigate("/login")
+        }
+        addToCart(productDetail._id, productDetail.price, quantity, user._id)
     }
 
 
@@ -311,7 +303,7 @@ const Detail = ({user}) => {
                          <>
                              <DetailTop reviews={reviews} productDetail={productDetail}  starsCount={starsCount}
                                     user={user} disLikes={disLikes} likes={likes} likeToggle={likeToggle}
-                                    setQuantity={setQuantity} quantity={quantity} addToCart={addToCart}
+                                    setQuantity={setQuantity} quantity={quantity} addItemToCart={addItemToCart}
                              />
                              <DetailMiddle user={user}
                                  productDetail={productDetail} modalToggle={modalToggle}
@@ -361,14 +353,14 @@ export default Detail
 
 const DetailTop = ({ 
         user, reviews, productDetail, starsCount, disLikes, likes, likeToggle,
-        setQuantity, quantity, addToCart
+        setQuantity, quantity, addItemToCart
     }) => {
     return (
         <div className="detail-img-container">
             <div className="inner-detail-img">
                 <ProductImage images={productDetail.image}/>
                 <ProductDetail 
-                    setQuantity={setQuantity} quantity={quantity} addToCart={addToCart}
+                    setQuantity={setQuantity} quantity={quantity} addItemToCart={addItemToCart}
                     reviews={reviews} productDetail={productDetail} starsCount={starsCount}
                     disLikes={disLikes} likes={likes} likeToggle={likeToggle} user={user}
                 />
@@ -437,7 +429,7 @@ const DirectionButton = () => {
 
 const ProductDetail = ({
     user, reviews, productDetail, starsCount, disLikes, likes, likeToggle,
-    setQuantity, quantity, addToCart
+    setQuantity, quantity, addItemToCart
     }) => {
     return (
         <div className="product-detail">
@@ -449,7 +441,7 @@ const ProductDetail = ({
                     <li className="li-link"><FontAwesomeIcon className="icon-pen"  icon={faPen} />Write a review</li>
                 </ul>
                 <ItemDetail productDetail={productDetail}/>
-                <ProductQuantity addToCart={addToCart} setQuantity={setQuantity} quantity={quantity}/>
+                <ProductQuantity addItemToCart={addItemToCart} setQuantity={setQuantity} quantity={quantity}/>
                 <WishListAdd user={user} likes={likes} disLikes={disLikes} likeToggle={likeToggle}/>
             </div>
         </div>
@@ -495,13 +487,13 @@ const ItemDetail = ({productDetail}) => {
 
 
 
-const ProductQuantity = ({quantity, setQuantity, addToCart}) => {
+const ProductQuantity = ({quantity, setQuantity, addItemToCart}) => {
     return (
         <div className="product-qauntity">
            <div className="productQty">
                <label>Qty</label>
                <input type="number" min="1" value={quantity} onChange={(e) => setQuantity(e.target.value)}/>
-               <button onClick={() => addToCart()} type="button">ADD TO CART</button>
+               <button onClick={() => addItemToCart()} type="button">ADD TO CART</button>
            </div>
         </div>
     )
