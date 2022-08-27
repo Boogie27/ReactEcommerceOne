@@ -198,12 +198,16 @@ const loginUser = AsyncHandler( async (request, response) => {
     if(!comparePassword){
         return response.send(false)
     }
-    let options = {
-        maxAge: 1000 * 60 * 60 * 24, // would expire after on day
-        httpOnly: true, // The cookie only accessible by the web server
-        signed: true // Indicates if the cookie should be signed
+    const loginUser = await User.findOneAndUpdate({_id: exists._id}, {$set: { is_active: 1}}).exec()
+    if(loginUser){
+        let options = {
+            maxAge: 1000 * 60 * 60 * 24, // would expire after on day
+            httpOnly: true, // The cookie only accessible by the web server
+            signed: true // Indicates if the cookie should be signed
+        }
+        return response.cookie('weshopapp', exists.token, options).send({data: 'success', user: exists})
     }
-    return response.cookie('weshopapp', exists.token, options).send({data: 'success', user: exists})
+    return response.send(false)
 })
 
 

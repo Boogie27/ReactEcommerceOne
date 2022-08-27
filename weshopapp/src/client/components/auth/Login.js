@@ -22,7 +22,7 @@ import AlertDanger from '../alerts/AlertDanger'
 
 
 
-const Login = ({alertMessage, setUser, isLoading, setIsLoading}) => {
+const Login = ({alertMessage, fetchCartItems, setUser, isLoading, setIsLoading}) => {
     const navigate = useNavigate();
     const [alert, setAlert] = useState('')
     const [email, setEmail] = useState('')

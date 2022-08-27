@@ -516,7 +516,7 @@ const WishListAdd = ({user, likes, disLikes, likeToggle}) => {
                     <FontAwesomeIcon  icon={faThumbsDown} /> likes {disLikes.length}
                 </li>
             </ul>
-            { user && likes.length > 1 && (
+            { user && likes.length  && (
                 <p className="like-dislike-font">You and {likes.length - 1} other member{likes.length - 1 > 1 ? 's' : ''} <b>like</b> this product</p>
             ) }
         </div>

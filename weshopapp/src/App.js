@@ -7,6 +7,8 @@ import Footer from './client/components/footer/Footer'
 import { NavLink } from 'react-router-dom'
 import Detail from './client/components/detail/Detail'
 import Login from './client/components/auth/Login'
+import Cart from './client/components/cart/cart'
+
 import Register from './client/components/auth/Register'
 import Navigation from './client/components/navigation/Navigation'
 import MiniNavigation from './client/components/navigation/MiniNavigation'
@@ -156,6 +158,7 @@ function App() {
           if(response.data){
             return setCart(response.data)
           }
+
           setCart([])
       })
     }
@@ -174,7 +177,7 @@ function App() {
       if(!response.data.data){
         return notify_error('Something went wront,try again!')
       }
-      
+
       notify_success('Item added to cart successfully!')
       setCart(response.data.cart)
     })
@@ -222,7 +225,8 @@ const notify_error = (string) => {
       <Routes>
           <Route path="/" element={<Home appState={appState} />}/>
           <Route path="/detail" element={<Detail user={user} addToCart={addToCart} alertError={alertError} alertMessage={alertMessage}/>}/>
-          <Route path="/login" element={<Login alertMessage={alertMessage} setUser={setUser} isLoading={isLoading} setIsLoading={setIsLoading}/>}/>
+          <Route path="/cart" element={<Cart user={user} addToCart={addToCart}/>}/>
+          <Route path="/login" element={<Login alertMessage={alertMessage} fetchCartItems={fetchCartItems} setUser={setUser} isLoading={isLoading} setIsLoading={setIsLoading}/>}/>
           <Route path="/register" element={<Register alertMessage={alertMessage} setUser={setUser} isLoading={isLoading} setIsLoading={setIsLoading}/>}/>
       </Routes>
       <Footer/>

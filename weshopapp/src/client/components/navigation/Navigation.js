@@ -1,6 +1,6 @@
 // import React, { useState, useEffect } from 'react'
 import { logo } from '../../Data'
-// import { NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import SideNavigation from './SideNavigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { 
@@ -106,8 +106,10 @@ const Profile = ({user, cart, toggleSearch, toggleAppState, appState}) => {
             <div className="profile-icon"><FontAwesomeIcon className="icon" icon={faUser} /></div>
             <div className="shopping-cart">
                 <div className="shopping-cart-icon">
+                    <NavLink to="/cart">
                     { cart.length > 0 ? (<span className="badge bg-warning cart-count">{ cart.length }</span>) : '' }
                     <FontAwesomeIcon className="icon" icon={faCartShopping} />
+                    </NavLink>
                 </div>
                 <div className="cart-text">
                     <div className="title-header"><h4>My Cart</h4></div>

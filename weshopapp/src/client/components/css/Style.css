@@ -243,6 +243,9 @@ a{
     font-size: 10px;
     position: absolute;
 }
+.shopping-cart-icon a{
+    color: #555;
+}
 .contact-icon:hover, .contact-text p:hover, .profile-icon:hover, .shopping-cart-icon:hover{
     color:  rgb(224, 157, 32);
 }
@@ -1810,6 +1813,9 @@ p.like-dislike-font{
     font-size: 15px;
     margin: 10px 0px;
 }
+.parent-container.active p.like-dislike-font{
+    color: rgb(224, 157, 32);
+}
 /* ********** DARK MODE ******** */
 .parent-container.active .main-product-img{
     border: none;
@@ -2339,3 +2345,104 @@ span.css-1xdhyk6 span{
         width: 90px;
     }
 }
+
+/* **************** SHOPPING CART *************** */
+.cart-container {
+    margin: 50px 0px;
+    padding: 0px 20px;
+}
+.cart-container .cart-items{
+    margin: 30px 0px;
+}
+.cart-transh-can{
+    color: red;
+    cursor: pointer
+}
+.cart-container .title-header{
+    text-align: center;
+}
+.cart-container .table-bordered thead{
+    color: #555;
+    background-color: rgb(241, 241, 241);
+    border-bottom: 2px solid #ccc;
+}
+tr.cart-items-detail td{
+    color: #555;
+}
+.cart-items-detail td{
+    height: 120px;
+    text-align: center;
+}
+.cart-items-detail td img{
+    width: 100px;
+}
+.cart-items-detail .content{
+    top: 40px;
+    position: relative;
+}
+.cart-total-container{
+    padding: 10px 0px;
+    border: 1px solid rgb(219, 219, 219);
+}
+.cart-total-container ul{
+    display: flex;
+    justify-content: space-between;
+}
+.cart-total-container ul li b.cart-total{
+    padding: 14px;
+}
+.cart-total-container ul li b.cart-total span{
+    color: rgb(224, 157, 32);
+}
+.cart-total-container ul li .checkout-link{
+    color: #fff;
+    padding: 14px;
+    font-weight: 600;
+    background-color: rgb(224, 157, 32);
+}
+.quantity-counter input.quantity-input{
+    width: 50px;
+    color: #555;
+    text-align: center;
+    border: 1px solid rgb(216, 216, 216);
+}
+.quantity-counter input.quantity-input:focus{
+    outline: none;
+}
+.quantity-counter button{
+    color: #555;
+    transition: all 0.2s ease;
+    background-color: transparent;
+    border: 1px solid rgb(216, 216, 216);
+}
+.quantity-counter button:hover{
+    color: #fff;
+    background-color: #333;
+    border: 1px solid #333;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
