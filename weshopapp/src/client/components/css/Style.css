@@ -2420,10 +2420,54 @@ tr.cart-items-detail td{
     background-color: #333;
     border: 1px solid #333;
 }
-
-
-
-
+/* ************ EMPTY SHOPPING CART *********** */
+.empty-shopping-cart{
+    height: 60vh;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;;
+}
+.empty-shopping-cart img{
+    width: 300px;
+}
+.empty-shopping-cart  .title-header{
+    margin: 20px 0px;
+}
+.empty-shopping-cart .cart-button{
+    color: #fff;
+    font-weight: bold;
+    padding: 10px 30px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    background-color: rgb(224, 157, 32);
+}
+.empty-shopping-cart .cart-button:hover{
+    background-color: rgb(194, 128, 7);
+    border: 2px solid rgb(247, 189, 81);
+}
+.empty-shopping-cart .cart-button .icon{
+    margin: 0px 10px;
+}
+.parent-container.active .empty-shopping-cart  .title-header h3{
+    color: #fff;
+}
+@media only screen and (max-width: 767px){
+    .empty-shopping-cart img{
+        width: 200px;
+    }
+}
+@media only screen and (max-width: 398px){
+    .empty-shopping-cart img{
+        width: 80%;
+    }
+    .empty-shopping-cart  .title-header h3{
+        font-size: 20px;
+    }
+    .empty-shopping-cart .cart-button{
+        padding: 10px 10px;
+    }
+}
 
 
 

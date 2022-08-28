@@ -84,9 +84,23 @@ const loader_img = (string) => {
 }
 
 
+const cart_img = (string) => {
+    return 'asset/cart/' + string
+}
+
+
 const name = (string) =>{
     return string.charAt(0).toUpperCase() + string.slice(1);
-  }
+}
+
+
+const token = () => {
+    const token = Cookies.get('weshopappuser')
+    if(token){
+        return token
+    }
+    return false
+}
 
 
 export {
@@ -95,6 +109,8 @@ export {
     name,
     money,
     today,
+    token,
+    cart_img,
     auth_img,
     moneySign,
     loader_img,

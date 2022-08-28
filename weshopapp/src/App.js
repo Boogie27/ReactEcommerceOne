@@ -158,7 +158,6 @@ function App() {
           if(response.data){
             return setCart(response.data)
           }
-
           setCart([])
       })
     }
