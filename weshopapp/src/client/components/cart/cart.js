@@ -25,6 +25,7 @@ import {
     productImageURL 
 } from '../../Data'
 import Preloader from '../preloader/Preloader'
+import { CartModalDropDown } from '../dropdown/CartModalDropDown'
 
 
 
@@ -32,14 +33,18 @@ import Preloader from '../preloader/Preloader'
 
 
 
-const Cart = ({user, addToCart}) => {
-    const [cart, setCart] = useState([])
+const Cart = ({user, cart, setCart, addToCart, notify_success, notify_error}) => {
     const [quantity, setQuantity] = useState(1)
-    const [isLoggedin, setIsLoggedin ] = useState(true)
+    const [isLoading, setIsLoading ] = useState(true)
+    const [isDeleting, setIsDeleting] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [deleteItemID, setDeleteItemID] = useState(null)
 
+
+    console.log(cart)
     useEffect(() => {
         fetchShoppingCart()
-    })
+    }, [])
 
 
     // fetch shopping cart
@@ -47,38 +52,76 @@ const Cart = ({user, addToCart}) => {
         if(token()){
             Axios.get(url(`/api/get-cart-items/${token()}`)).then((response) => { 
                 if(response.data){
-                    setIsLoggedin(false)
+                    setIsLoading(false)
                   return setCart(response.data)
                 }
                 setCart([])
             })
-            setIsLoggedin(false)
-          }
+        }
+        setIsLoading(false)
     }
 
 
-    const removeProduct = () => {
-        console.log('deleted')
+    const quantityToggle = (index, counter,) => {
+        const item = cart[index]
+        let new_quantity = counter + item.quantity
+        if(new_quantity <= 0){
+            new_quantity = 0
+        }
+         
+        Axios.post(url('/api/toggle-cart-quantity'), {id: item._id, new_quantity: new_quantity, product_id: item.product._id}).then((response) => {
+            if(response.data == 'greater'){
+                return notify_error('Quantity exceed available quantity!')
+            }
+            if(response.data){
+                return fetchShoppingCart()
+            }
+        })
+       
     }
 
-    const quantityToggle = (string) => {
-        console.log(string)
+
+
+    // open and close delete modal 
+    const modalToggle = (action, string) => { 
+        setIsDeleting(false)
+        setIsModalOpen(action) 
+        setDeleteItemID(string)
+    }
+
+    // delete cart item
+    const deleteItem = () => {
+        if(!deleteItemID){
+            return notify_error("Something went wront, try again!")
+        }
+        Axios.post(url('/api/delete-cart-item'), {_id: deleteItemID}).then((response) => {
+            if(response.data){
+                fetchShoppingCart()
+                modalToggle(false, null)
+                setDeleteItemID(null)
+                return notify_success("Cart item deleted successfuly!")
+            }
+            return notify_error("Something went wront, try again!")
+        })
     }
 
 
+
+
+    
 
 
     return (
         <>
-         {isLoggedin ? (
+         {isLoading ? (
             <>
                 <EmptyCart/>
                 <Preloader text="Loading, please wait..."/>
             </>
             ) : (
-             <div className="cart-container">
-             {
-                 cart.length == 0 ? (<EmptyCart/>) : (
+            <div className="cart-container">
+            {
+                cart.length == 0 ? (<EmptyCart/>) : (
                      <div className="cart-items">
                          <div className="title-header"><h3>Shopping Cart</h3></div>
                          <table className="table table-bordered">
@@ -93,10 +136,21 @@ const Cart = ({user, addToCart}) => {
                                  </tr>
                              </thead>
                              <tbody>
-                                 <CartItems image={'1.jpg'} name={'Iphon 13 pro max'} price={12000} quantity={2} removeProduct={removeProduct} quantityToggle={quantityToggle} setQuantity={setQuantity}/>
+                                {
+                                    cart.map((item, index) => (
+                                        <CartItems item_id={item._id}
+                                            index={index} image={item.product.image} key={index} 
+                                            name={item.product.product_name} price={item.price} 
+                                            quantity={item.quantity} modalToggle={modalToggle} 
+                                            quantityToggle={quantityToggle} setQuantity={setQuantity}/>
+                                    ))
+                                }
                              </tbody>
-                         </table>
-                         <CartTotal/>
+                        </table>
+                        <CartTotal/>
+                        {
+                            isModalOpen && <CartModalDropDown isDeleting={isDeleting} deleteItem={deleteItem} modalToggle={modalToggle} />
+                        }
                      </div>
                  )
              }
@@ -113,23 +167,27 @@ export default Cart
 
 
 
-const CartItems = ({image, name, price, quantity, removeProduct, quantityToggle, setQuantity}) => {
+const CartItems = ({item_id, index, image, name, price, quantity, modalToggle, quantityToggle, setQuantity}) => {
+    let product_image = '1.jpg'
+    if(image != undefined){
+        product_image = image[0]
+    }
     return (
         <tr className="cart-items-detail">
             <th scope="row">
                 <div className="content">
-                    <FontAwesomeIcon onClick={() => removeProduct()} className="cart-transh-can"  icon={faTrashCan} />
+                    <FontAwesomeIcon onClick={() => modalToggle(true, item_id)} className="cart-transh-can"  icon={faTrashCan} />
                 </div>
             </th>
-            <td><img src={product_img(image)} alt=""/></td>
+            <td><img src={product_img(product_image)} alt=""/></td>
             <td><div className="content">{name}</div></td>
             <td><div className="content">{money(price)}</div></td>
             <td>
                 <div className="content">
                     <div className="quantity-counter">
-                        <button type="button"><FontAwesomeIcon onClick={() => quantityToggle('decrease')} className="icon"  icon={faMinus} /></button>
-                        <input type="text" onChange={(e) => setQuantity(e.target.value)} value="1" className="quantity-input"/>
-                        <button type="button"><FontAwesomeIcon onClick={() => quantityToggle('increase')} className="icon"  icon={faPlus} /></button>
+                        <button type="button"><FontAwesomeIcon onClick={() => quantityToggle(index, -1)} className="icon"  icon={faMinus} /></button>
+                        <input type="text" onChange={(e) => setQuantity(e.target.value)} value={quantity} className="quantity-input"/>
+                        <button type="button"><FontAwesomeIcon onClick={() => quantityToggle(index, 1)} className="icon"  icon={faPlus} /></button>
                     </div>
                 </div>
             </td>

@@ -1,4 +1,5 @@
 const User = require('../models/users')
+const Product = require('../models/products')
 const Cart = require('../models/Cart')
 const AsyncHandler = require('express-async-handler')
 const { today } = require('../data')
@@ -11,7 +12,7 @@ const { today } = require('../data')
 // add item to cart
 const addToCart = AsyncHandler(async (request, response) => {
     const item = {
-        product_id: request.body.product_id,
+        product: request.body.product_id,
         user: request.body.user_id,
         quantity: request.body.quantity,
         price: request.body.price,
@@ -35,7 +36,10 @@ const fetchCartItems = AsyncHandler(async (request, response) => {
     const token = request.params.token
     const exists = await User.findOne({token: token, is_active: 1}).exec()
     if(exists){
-        const cartItems = await Cart.find({user: exists._id})
+        const cartItems = await Cart.find({user: exists._id}).populate(
+            'product',
+            'image product_name'
+        )
         if(cartItems){
             return response.send(cartItems)
         }
@@ -46,7 +50,49 @@ const fetchCartItems = AsyncHandler(async (request, response) => {
 
 
 
+
+
+// toggle cart quantity
+const toggleCartQuantity = AsyncHandler(async (request, response) => {
+        const { id, new_quantity, product_id} = request.body
+        if(new_quantity > 0){
+            const product_quantity = await Product.findOne({_id: product_id}).exec()
+            if(new_quantity <= product_quantity.quantity){
+                const update = await Cart.findOneAndUpdate({_id: id}, {$set: { quantity: new_quantity}}).exec()
+            }else{
+                return response.send('greater')
+            }
+            return response.send(true)
+        }
+
+        if(new_quantity == 0){
+            Cart.deleteOne({_id: id}).exec()
+            return response.send(true)
+        }
+    
+        return response.send(false)
+})
+
+
+
+// delete acrt item
+const deleteCartItem = AsyncHandler(async (request, response) => {
+    const { _id } = request.body
+    const exists = Cart.findOne({_id: _id}).exec()
+    if(exists){
+        const deleteItem = await Cart.deleteOne({_id: _id}).exec()
+        if(deleteItem){
+            return response.send(true)
+        }
+    }
+    return response.send(false)
+})
+
+
+
 module.exports = { 
     addToCart,
-    fetchCartItems
+    fetchCartItems,
+    deleteCartItem,
+    toggleCartQuantity
 }

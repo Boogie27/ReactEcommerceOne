@@ -80,8 +80,8 @@ app.get('/reviews', async (request, response) => {
     const reviews = await PRODUCT_REVIEW_MODEL.find({product_id: product_id}).populate(
         'user',
         'first_name last_name image gender is_active'
-      )
-      return response.json({ reviews });
+    )
+    return response.json({ reviews });
 })
 
 
