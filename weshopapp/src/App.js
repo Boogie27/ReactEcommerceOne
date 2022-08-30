@@ -28,7 +28,7 @@ import { ToastContainer, toast } from 'react-toastify';
 
 function App() {
   const [user, setUser] = useState(false)
-  const token = Cookies.get('weshopappuser')
+  let token = Cookies.get('weshopappuser')
   const [cart, setCart] = useState([])
   const [message, setMessage] = useState(false)
   const [errorAlert, setErrorAlert] = useState(false)
@@ -68,6 +68,8 @@ function App() {
     userAppState(user)
     fetchCartItems()
   }, [])
+
+  
 
 
   // change user app theme on page load
@@ -152,7 +154,12 @@ function App() {
 
 
   // fetch cart items
-  const fetchCartItems  = () => {
+  const fetchCartItems  = (string = null) => {
+    
+    if(string && token == undefined){
+      token = string
+    }
+    
     if(token){
       Axios.get(url(`/api/get-cart-items/${token}`)).then((response) => { 
           if(response.data){

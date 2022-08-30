@@ -441,7 +441,11 @@ const ProductDetail = ({
                     <li className="li-link"><FontAwesomeIcon className="icon-pen"  icon={faPen} />Write a review</li>
                 </ul>
                 <ItemDetail productDetail={productDetail}/>
-                <ProductQuantity addItemToCart={addItemToCart} setQuantity={setQuantity} quantity={quantity}/>
+                {
+                    productDetail.quantity > 0 ? (
+                        <ProductQuantity addItemToCart={addItemToCart} setQuantity={setQuantity} quantity={quantity}/>
+                    ) : ''
+                }
                 <WishListAdd user={user} likes={likes} disLikes={disLikes} likeToggle={likeToggle}/>
             </div>
         </div>
@@ -516,9 +520,10 @@ const WishListAdd = ({user, likes, disLikes, likeToggle}) => {
                     <FontAwesomeIcon  icon={faThumbsDown} /> likes {disLikes.length}
                 </li>
             </ul>
-            { user && likes.length  && (
+            { user && likes.length > 0 ? (
                 <p className="like-dislike-font">You and {likes.length - 1} other member{likes.length - 1 > 1 ? 's' : ''} <b>like</b> this product</p>
-            ) }
+            ) : ''
+            }
         </div>
     )
 }

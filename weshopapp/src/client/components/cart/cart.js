@@ -34,6 +34,7 @@ import { CartModalDropDown } from '../dropdown/CartModalDropDown'
 
 
 const Cart = ({user, cart, setCart, addToCart, notify_success, notify_error}) => {
+    const [totalPrice, setTotalPrice] = useState(0)
     const [quantity, setQuantity] = useState(1)
     const [isLoading, setIsLoading ] = useState(true)
     const [isDeleting, setIsDeleting] = useState(false)
@@ -41,7 +42,7 @@ const Cart = ({user, cart, setCart, addToCart, notify_success, notify_error}) =>
     const [deleteItemID, setDeleteItemID] = useState(null)
 
 
-    console.log(cart)
+   
     useEffect(() => {
         fetchShoppingCart()
     }, [])
@@ -53,9 +54,15 @@ const Cart = ({user, cart, setCart, addToCart, notify_success, notify_error}) =>
             Axios.get(url(`/api/get-cart-items/${token()}`)).then((response) => { 
                 if(response.data){
                     setIsLoading(false)
+                    let totalPrice = 0
+                    response.data.map((item, index) => {
+                        totalPrice = totalPrice + ( item.price * item.quantity)
+                    })
+                    setTotalPrice(totalPrice)
                   return setCart(response.data)
                 }
                 setCart([])
+                setTotalPrice(0)
             })
         }
         setIsLoading(false)
@@ -147,7 +154,7 @@ const Cart = ({user, cart, setCart, addToCart, notify_success, notify_error}) =>
                                 }
                              </tbody>
                         </table>
-                        <CartTotal/>
+                        <CartTotal totalPrice={totalPrice}/>
                         {
                             isModalOpen && <CartModalDropDown isDeleting={isDeleting} deleteItem={deleteItem} modalToggle={modalToggle} />
                         }
@@ -204,11 +211,11 @@ const CartItems = ({item_id, index, image, name, price, quantity, modalToggle, q
 
 
 
-const CartTotal = () => {
+const CartTotal = ({totalPrice}) => {
     return (
         <div className="cart-total-container">
             <ul>
-                <li><b className="cart-total">Total: <span>24,000</span></b></li>
+                <li><b className="cart-total">Total: <span>{money(totalPrice)}</span></b></li>
                 <li><NavLink to="/checkout" className="checkout-link">Proceed to checkout</NavLink></li>
             </ul>
         </div>

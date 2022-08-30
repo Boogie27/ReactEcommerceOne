@@ -61,7 +61,7 @@ const Login = ({alertMessage, fetchCartItems, setUser, isLoading, setIsLoading})
                     setIsLoading({state: false, text: ''})
                     Cookies.set('weshopappuser', data.user.token, { expires: 1 })
                     const old_page = Cookies.get('current_url')
-                    
+                    fetchCartItems(data.user.token)
                     if(old_page){
                         Cookies.set('current_url', '', { expires: new Date(0) })
                         return navigate(old_page)
