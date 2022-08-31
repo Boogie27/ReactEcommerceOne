@@ -18,6 +18,18 @@ const addToCart = AsyncHandler(async (request, response) => {
         price: request.body.price,
         created_at: today(),
     }
+
+    //  if item exists in cart increase quantity
+    const exists = await Cart.findOne({ product: item.product, user: item.user }).exec()
+    if(exists){
+        const new_quantity = exists.quantity + item.quantity
+        const update = await Cart.findOneAndUpdate({_id: exists._id}, {$set: { quantity: new_quantity}}).exec()
+        if(update){
+            const cartItem = await Cart.find({user: item.user}).exec()
+            return response.send({ data: true, cart: cartItem })
+        }
+    }
+    
     const add = await Cart.create(item)
     if(add){
         const cartItem = await Cart.find({user: item.user}).exec()
