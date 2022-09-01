@@ -195,6 +195,21 @@ function App() {
 
 
 
+  // add to wish list
+  const addToWishlist = (item) => {
+    if(!user){
+      if(item.old_url){
+        Cookies.set('current_url', item.old_url, { expires: 1 })
+      }
+      return notify_error('Login or Register to proceed!')
+    }
+
+    Axios.post(url(`/api/add-to-wishlist`), item).then((response) => {
+      return notify_error('Something went wrong, Try again!')
+    })
+  }
+
+
 
   const notify_success = (string) => {
     toast.success(string, {
@@ -234,7 +249,7 @@ const notify_error = (string) => {
       </div>
       <Routes>
           <Route path="/" element={<Home appState={appState} addToCart={addToCart}/>}/>
-          <Route path="/detail" element={<Detail user={user} addToCart={addToCart} alertError={alertError} alertMessage={alertMessage}/>}/>
+          <Route path="/detail" element={<Detail addToWishlist={addToWishlist} user={user} addToCart={addToCart} alertError={alertError} alertMessage={alertMessage}/>}/>
           <Route path="/cart" element={<Cart user={user} cart={cart} setCart={setCart} addToCart={addToCart} notify_success={notify_success} notify_error={notify_error}/>}/>
           <Route path="/wishlist" element={<Wishlist/>}/>
           <Route path="/login" element={<Login alertMessage={alertMessage} fetchCartItems={fetchCartItems} setUser={setUser} isLoading={isLoading} setIsLoading={setIsLoading}/>}/>

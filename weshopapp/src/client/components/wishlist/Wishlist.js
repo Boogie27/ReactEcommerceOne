@@ -36,12 +36,16 @@ const Wishlist = () => {
 
     return (
         <div className="wishlist-container">
-            {isLoading.loading ? (
+            {
+                isLoading.loading ? (
                 <>
                     <EmptyWishlist/>
                     <Preloader text={isLoading.text}/>
                 </>
-            ) : ('')}
+                ) : (
+                    ''
+                )
+            }
             
         </div>
     )

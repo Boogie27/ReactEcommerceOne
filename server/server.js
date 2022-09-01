@@ -12,6 +12,7 @@ const userRoute = require('./routes/userRoute')
 const cartRoute = require('./routes/cartRoute') 
 const getUserRoute = require('./routes/getUserRoute') 
 const productRoute = require('./routes/productRoute') 
+const wishlistRoute = require('./routes/wishlistRoute') 
 
 
 require('dotenv').config()
@@ -160,6 +161,13 @@ app.use(productRoute)
 
 // cart route
 app.use(cartRoute)
+
+// wishlist route
+app.use(wishlistRoute)
+
+
+
+
 
 
 app.listen(PORT, () => {

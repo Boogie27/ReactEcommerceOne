@@ -40,7 +40,7 @@ import Preloader from '../preloader/Preloader'
 
 
 
-const Detail = ({user, addToCart, alertError, alertMessage}) => {
+const Detail = ({user, addToCart, alertError, alertMessage, addToWishlist}) => {
     const navigate = useNavigate()
     const [searchParams] = useSearchParams();
     const product_id = searchParams.get('product')
@@ -299,6 +299,18 @@ const Detail = ({user, addToCart, alertError, alertMessage}) => {
         addToCart(item)
     }
 
+    
+
+    // add product to wishslist
+    const addItemToWishlist = () => {
+        const item = {
+            product_id: productDetail._id,
+            price: productDetail.price,
+            old_url: current_url,
+        }
+        addToWishlist(item)
+    }
+
 
     return (
         <>
@@ -310,6 +322,7 @@ const Detail = ({user, addToCart, alertError, alertMessage}) => {
                              <DetailTop reviews={reviews} productDetail={productDetail}  starsCount={starsCount}
                                     user={user} disLikes={disLikes} likes={likes} likeToggle={likeToggle}
                                     setQuantity={setQuantity} quantity={quantity} addItemToCart={addItemToCart}
+                                    addItemToWishlist={addItemToWishlist}
                              />
                              <DetailMiddle user={user}
                                  productDetail={productDetail} modalToggle={modalToggle}
@@ -359,13 +372,13 @@ export default Detail
 
 const DetailTop = ({ 
         user, reviews, productDetail, starsCount, disLikes, likes, likeToggle,
-        setQuantity, quantity, addItemToCart
+        setQuantity, quantity, addItemToCart, addItemToWishlist
     }) => {
     return (
         <div className="detail-img-container">
             <div className="inner-detail-img">
                 <ProductImage images={productDetail.image}/>
-                <ProductDetail 
+                <ProductDetail addItemToWishlist={addItemToWishlist}
                     setQuantity={setQuantity} quantity={quantity} addItemToCart={addItemToCart}
                     reviews={reviews} productDetail={productDetail} starsCount={starsCount}
                     disLikes={disLikes} likes={likes} likeToggle={likeToggle} user={user}
@@ -435,7 +448,7 @@ const DirectionButton = () => {
 
 const ProductDetail = ({
     user, reviews, productDetail, starsCount, disLikes, likes, likeToggle,
-    setQuantity, quantity, addItemToCart
+    setQuantity, quantity, addItemToCart, addItemToWishlist
     }) => {
     return (
         <div className="product-detail">
@@ -452,7 +465,7 @@ const ProductDetail = ({
                         <ProductQuantity addItemToCart={addItemToCart} setQuantity={setQuantity} quantity={quantity}/>
                     ) : ''
                 }
-                <WishListAdd user={user} likes={likes} disLikes={disLikes} likeToggle={likeToggle}/>
+                <WishListAdd addItemToWishlist={addItemToWishlist} user={user} likes={likes} disLikes={disLikes} likeToggle={likeToggle}/>
             </div>
         </div>
     )
@@ -514,11 +527,11 @@ const ProductQuantity = ({quantity, setQuantity, addItemToCart}) => {
 
 
 
-const WishListAdd = ({user, likes, disLikes, likeToggle}) => {
+const WishListAdd = ({user, likes, disLikes, likeToggle, addItemToWishlist}) => {
     return (
         <div className="icons">
             <ul>
-                <li><FontAwesomeIcon className=""  icon={faHeart} /> Add To Wishlist</li>
+                <li onClick={() => addItemToWishlist()}><FontAwesomeIcon icon={faHeart} /> Add To Wishlist</li>
                 <li onClick={() => likeToggle(true)} className="thumbs-like">
                     <FontAwesomeIcon  icon={faThumbsUp} /> likes {likes.length}
                 </li>
