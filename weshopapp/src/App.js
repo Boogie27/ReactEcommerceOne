@@ -8,6 +8,8 @@ import { NavLink } from 'react-router-dom'
 import Detail from './client/components/detail/Detail'
 import Login from './client/components/auth/Login'
 import Cart from './client/components/cart/cart'
+import Wishlist from './client/components/wishlist/Wishlist'
+
 
 import Register from './client/components/auth/Register'
 import Navigation from './client/components/navigation/Navigation'
@@ -171,13 +173,15 @@ function App() {
   }
  
 
-  const addToCart = (product_id, price, quantity, user_id) => {
-    const item = {
-      product_id: product_id,
-      quantity: quantity,
-      price: price,
-      user_id: user_id
+  const addToCart = (item) => {
+    if(!user){
+      if(item.old_url){
+        Cookies.set('current_url', item.old_url, { expires: 1 })
+      }
+      return notify_error('Login or Register to proceed!')
     }
+
+    item.user_id = user._id
 
     Axios.post(url('/api/add-to-cart'), item).then((response) => {
       if(!response.data.data){
@@ -229,9 +233,10 @@ const notify_error = (string) => {
         {errorAlert && <AlertDanger alert={errorAlert}/>}
       </div>
       <Routes>
-          <Route path="/" element={<Home appState={appState} />}/>
+          <Route path="/" element={<Home appState={appState} addToCart={addToCart}/>}/>
           <Route path="/detail" element={<Detail user={user} addToCart={addToCart} alertError={alertError} alertMessage={alertMessage}/>}/>
           <Route path="/cart" element={<Cart user={user} cart={cart} setCart={setCart} addToCart={addToCart} notify_success={notify_success} notify_error={notify_error}/>}/>
+          <Route path="/wishlist" element={<Wishlist/>}/>
           <Route path="/login" element={<Login alertMessage={alertMessage} fetchCartItems={fetchCartItems} setUser={setUser} isLoading={isLoading} setIsLoading={setIsLoading}/>}/>
           <Route path="/register" element={<Register alertMessage={alertMessage} setUser={setUser} isLoading={isLoading} setIsLoading={setIsLoading}/>}/>
       </Routes>

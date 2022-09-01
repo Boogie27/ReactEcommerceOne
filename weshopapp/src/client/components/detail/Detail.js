@@ -290,7 +290,13 @@ const Detail = ({user, addToCart, alertError, alertMessage}) => {
             Cookies.set('current_url', current_url, { expires: 1 })
             return navigate("/login")
         }
-        addToCart(productDetail._id, productDetail.price, quantity, user._id)
+        const item = {
+            product_id: productDetail._id,
+            quantity: quantity,
+            price: productDetail.price,
+            user_id: user._id
+          }
+        addToCart(item)
     }
 
 

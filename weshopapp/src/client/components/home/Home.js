@@ -48,7 +48,7 @@ const categories = [
 
 
 
-const Home = ({appState}) => {
+const Home = ({appState, addToCart}) => {
   const [product, setProduct] = useState(null)
   const [latestProducts, setLatestProducts] = useState([])
   const [featuredProducts, setFeaturedProducts] = useState([])
@@ -79,13 +79,13 @@ const Home = ({appState}) => {
       <Banner appState={appState} />
       <div className="home-body">
         <SideProduct/>
-        <HomeBody showQuickView={showQuickView} categories={categories} latestProducts={latestProducts}/>
+        <HomeBody addToCart={addToCart} showQuickView={showQuickView} categories={categories} latestProducts={latestProducts}/>
       </div>
       <div className="second-banner-container">
         <SecondBanner/>
       </div>
       <div className="featured-p-container">
-        <FeaturedProducts showQuickView={showQuickView} featuredProducts={featuredProducts}/>
+        <FeaturedProducts addToCart={addToCart} showQuickView={showQuickView} featuredProducts={featuredProducts}/>
       </div>
       <BottomBanner/>
       {
@@ -105,7 +105,7 @@ export default Home
 
 
 
-const HomeBody = ({categories, latestProducts, showQuickView}) => {
+const HomeBody = ({categories, addToCart, latestProducts, showQuickView}) => {
   return (
     <div className="homebody-container">
       <div className="inner-homebody">
@@ -124,7 +124,7 @@ const HomeBody = ({categories, latestProducts, showQuickView}) => {
                 latestProducts.map((featuredProduct) => (
                   <Col key={featuredProduct._id} xs={12} sm={6} md={4}>
                   {
-                    featuredProduct.image.length > 0 ? ( <FeaturedProduct showQuickView={showQuickView} featuredProduct={featuredProduct}/> ) : null
+                    featuredProduct.image.length > 0 ? ( <FeaturedProduct addToCart={addToCart} showQuickView={showQuickView} featuredProduct={featuredProduct}/> ) : null
                   }
                   </Col>
                 )) 
@@ -187,7 +187,7 @@ const SecondBanner = () => {
 
 
 
-const FeaturedProducts = ({featuredProducts, showQuickView}) => {
+const FeaturedProducts = ({addToCart, featuredProducts, showQuickView}) => {
   return (
     <div className="product-conatiner">
       <div className="title-header"><h4>FEATURED PRODUCTS</h4></div>
@@ -197,7 +197,7 @@ const FeaturedProducts = ({featuredProducts, showQuickView}) => {
             featuredProducts.map((featuredProduct) => (
               <Col key={featuredProduct._id} xs={12} sm={6} md={4} lg={3}>
               {
-                featuredProduct.image.length > 0 ? ( <FeaturedProduct showQuickView={showQuickView} featuredProduct={featuredProduct}/> ) : null
+                featuredProduct.image.length > 0 ? ( <FeaturedProduct addToCart={addToCart} showQuickView={showQuickView} featuredProduct={featuredProduct}/> ) : null
               }
               </Col>
             )) 

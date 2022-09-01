@@ -13,8 +13,7 @@ const MiniNavigation = ({user, modalToggle}) => {
                         <li><NavLink to="/">HOME</NavLink></li>
                         <li><NavLink to="/products">PRODUCTS</NavLink></li>
                         <li><NavLink to="/wishlist">WISHLIST</NavLink></li>
-                        <li><NavLink to="/cart">CART</NavLink></li>
-                        <li><NavLink to="/detail">CONTACT</NavLink></li>
+                        <li><NavLink to="/contact">CONTACT</NavLink></li>
                         { user ? (
                             <li onClick={(e) => modalToggle(true, e)}>LOGOUT</li>
                         ) : (

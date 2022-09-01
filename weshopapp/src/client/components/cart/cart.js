@@ -36,7 +36,7 @@ import { CartModalDropDown } from '../dropdown/CartModalDropDown'
 const Cart = ({user, cart, setCart, addToCart, notify_success, notify_error}) => {
     const [totalPrice, setTotalPrice] = useState(0)
     const [quantity, setQuantity] = useState(1)
-    const [isLoading, setIsLoading ] = useState(true)
+    const [isLoading, setIsLoading ] = useState({loading: true, text: 'Fetching Cart, Please Wait...'})
     const [isDeleting, setIsDeleting] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [deleteItemID, setDeleteItemID] = useState(null)
@@ -53,7 +53,7 @@ const Cart = ({user, cart, setCart, addToCart, notify_success, notify_error}) =>
         if(token()){
             Axios.get(url(`/api/get-cart-items/${token()}`)).then((response) => { 
                 if(response.data){
-                    setIsLoading(false)
+                    setIsLoading({loading: false, text: ''})
                     let totalPrice = 0
                     response.data.map((item, index) => {
                         totalPrice = totalPrice + ( item.price * item.quantity)
@@ -65,7 +65,7 @@ const Cart = ({user, cart, setCart, addToCart, notify_success, notify_error}) =>
                 setTotalPrice(0)
             })
         }
-        setIsLoading(false)
+        setIsLoading({loading: false, text: ''})
     }
 
 
@@ -74,6 +74,7 @@ const Cart = ({user, cart, setCart, addToCart, notify_success, notify_error}) =>
         let new_quantity = counter + item.quantity
         if(new_quantity <= 0){
             new_quantity = 0
+            setIsLoading({loading: true, text: 'Deleting Product, Please Wait...'})
         }
          
         Axios.post(url('/api/toggle-cart-quantity'), {id: item._id, new_quantity: new_quantity, product_id: item.product._id}).then((response) => {
@@ -81,8 +82,11 @@ const Cart = ({user, cart, setCart, addToCart, notify_success, notify_error}) =>
                 return notify_error('Quantity exceed available quantity!')
             }
             if(response.data){
+                setIsLoading({loading: false, text: ''})
                 return fetchShoppingCart()
             }
+            setIsLoading({loading: false, text: ''})
+            return notify_error("Something went wront, try again!")
         })
        
     }
@@ -98,6 +102,8 @@ const Cart = ({user, cart, setCart, addToCart, notify_success, notify_error}) =>
 
     // delete cart item
     const deleteItem = () => {
+        setIsLoading({loading: true, text: 'Deleting Product, Please Wait...'})
+
         if(!deleteItemID){
             return notify_error("Something went wront, try again!")
         }
@@ -106,8 +112,10 @@ const Cart = ({user, cart, setCart, addToCart, notify_success, notify_error}) =>
                 fetchShoppingCart()
                 modalToggle(false, null)
                 setDeleteItemID(null)
+                setIsLoading({loading: false, text: ''})
                 return notify_success("Cart item deleted successfuly!")
             }
+            setIsLoading({loading: false, text: ''})
             return notify_error("Something went wront, try again!")
         })
     }
@@ -120,10 +128,10 @@ const Cart = ({user, cart, setCart, addToCart, notify_success, notify_error}) =>
 
     return (
         <>
-         {isLoading ? (
+         {isLoading.loading ? (
             <>
                 <EmptyCart/>
-                <Preloader text="Loading, please wait..."/>
+                <Preloader text={isLoading.text}/>
             </>
             ) : (
             <div className="cart-container">
@@ -145,7 +153,7 @@ const Cart = ({user, cart, setCart, addToCart, notify_success, notify_error}) =>
                              <tbody>
                                 {
                                     cart.map((item, index) => (
-                                        <CartItems item_id={item._id}
+                                        <CartItems item_id={item._id} item={item}
                                             index={index} image={item.product.image} key={index} 
                                             name={item.product.product_name} price={item.price} 
                                             quantity={item.quantity} modalToggle={modalToggle} 
@@ -157,6 +165,9 @@ const Cart = ({user, cart, setCart, addToCart, notify_success, notify_error}) =>
                         <CartTotal totalPrice={totalPrice}/>
                         {
                             isModalOpen && <CartModalDropDown isDeleting={isDeleting} deleteItem={deleteItem} modalToggle={modalToggle} />
+                        }
+                        {
+                            isLoading.loading ? (<Preloader text={isLoading.text}/>) : ''
                         }
                      </div>
                  )
@@ -174,7 +185,7 @@ export default Cart
 
 
 
-const CartItems = ({item_id, index, image, name, price, quantity, modalToggle, quantityToggle, setQuantity}) => {
+const CartItems = ({item_id, item, index, image, name, price, quantity, modalToggle, quantityToggle, setQuantity}) => {
     let product_image = '1.jpg'
     if(image != undefined){
         product_image = image[0]
@@ -186,8 +197,18 @@ const CartItems = ({item_id, index, image, name, price, quantity, modalToggle, q
                     <FontAwesomeIcon onClick={() => modalToggle(true, item_id)} className="cart-transh-can"  icon={faTrashCan} />
                 </div>
             </th>
-            <td><img src={product_img(product_image)} alt=""/></td>
-            <td><div className="content">{name}</div></td>
+            <td>
+                <NavLink to={`/detail?product=${ item.product._id }&category=${ item.product.category }`}>
+                    <img src={product_img(product_image)} alt=""/>
+                </NavLink>
+            </td>
+            <td>
+                <div className="content">
+                    <NavLink to={`/detail?product=${ item.product._id }&category=${ item.product.category }`}>
+                        {name}
+                    </NavLink>
+                </div>
+            </td>
             <td><div className="content">{money(price)}</div></td>
             <td>
                 <div className="content">
