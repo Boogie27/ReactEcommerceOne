@@ -22,7 +22,7 @@ import AlertDanger from '../alerts/AlertDanger'
 
 
 
-const Login = ({alertMessage, fetchCartItems, setUser, isLoading, setIsLoading}) => {
+const Login = ({fetchWishlistItems, alertMessage, fetchCartItems, setUser, isLoading, setIsLoading}) => {
     const navigate = useNavigate();
     const [alert, setAlert] = useState('')
     const [email, setEmail] = useState('')
@@ -62,6 +62,7 @@ const Login = ({alertMessage, fetchCartItems, setUser, isLoading, setIsLoading})
                     Cookies.set('weshopappuser', data.user.token, { expires: 1 })
                     const old_page = Cookies.get('current_url')
                     fetchCartItems(data.user.token)
+                    fetchWishlistItems(data.user.token)
                     if(old_page){
                         Cookies.set('current_url', '', { expires: new Date(0) })
                         return navigate(old_page)

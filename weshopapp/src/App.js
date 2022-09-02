@@ -32,6 +32,7 @@ function App() {
   const [user, setUser] = useState(false)
   let token = Cookies.get('weshopappuser')
   const [cart, setCart] = useState([])
+  const [wishlist, setWishlist] = useState([])
   const [message, setMessage] = useState(false)
   const [errorAlert, setErrorAlert] = useState(false)
   const [logoutModal, setLogoutModal] = useState(false)
@@ -69,6 +70,7 @@ function App() {
     getLoggedinUser() //get auth user
     userAppState(user)
     fetchCartItems()
+    fetchWishlistItems()
   }, [])
 
   
@@ -118,6 +120,7 @@ function App() {
         }
         setUser(false)
         fetchCartItems()
+        fetchWishlistItems()
         setIsLoading({state: false, text: ''})
       })
     }
@@ -195,6 +198,20 @@ function App() {
 
 
 
+
+  const fetchWishlistItems = (string = null) => {
+    if(string && token == undefined){
+      token = string
+    }
+    if(token != undefined){
+      Axios.get(url(`/api/fetch-wishlist-items/${token}`)).then((response) => {
+        return setWishlist(response.data)
+      })
+    }
+    setWishlist([])
+  }
+
+
   // add to wish list
   const addToWishlist = (item) => {
     if(!user){
@@ -205,7 +222,16 @@ function App() {
     }
 
     Axios.post(url(`/api/add-to-wishlist`), item).then((response) => {
-      return notify_error('Something went wrong, Try again!')
+      if(response.data.state == 'exists'){
+        return alertError('Product already exists in wishlist', 3000)
+      }
+      if(response.data.state == 'created'){
+        fetchWishlistItems()
+        alertMessage('Product added to wishlist successfully!', 3000)
+      }
+      if(response.data.state == 'error'){
+        return alertError('Something went wrong, Try again!', 3000)
+      }
     })
   }
 
@@ -243,7 +269,7 @@ const notify_error = (string) => {
     <div className={`parent-container ${appState && 'active'}`}>
       <div className="parent-nav-container">
         <Navigation  user={user} cart={cart} appState={appState} sideNavToggle={sideNavToggle} toggleSearch={toggleSearch} mobileSearch={mobileSearch} sideNavi={sideNavi} toggleAppState={toggleAppState}/>
-        <MiniNavigation user={user} modalToggle={modalToggle}/>
+        <MiniNavigation user={user} wishlist={wishlist} modalToggle={modalToggle}/>
         {message && <AlertSuccess alert={message}/>}
         {errorAlert && <AlertDanger alert={errorAlert}/>}
       </div>
@@ -252,7 +278,7 @@ const notify_error = (string) => {
           <Route path="/detail" element={<Detail addToWishlist={addToWishlist} user={user} addToCart={addToCart} alertError={alertError} alertMessage={alertMessage}/>}/>
           <Route path="/cart" element={<Cart user={user} cart={cart} setCart={setCart} addToCart={addToCart} notify_success={notify_success} notify_error={notify_error}/>}/>
           <Route path="/wishlist" element={<Wishlist/>}/>
-          <Route path="/login" element={<Login alertMessage={alertMessage} fetchCartItems={fetchCartItems} setUser={setUser} isLoading={isLoading} setIsLoading={setIsLoading}/>}/>
+          <Route path="/login" element={<Login fetchWishlistItems={fetchWishlistItems} alertMessage={alertMessage} fetchCartItems={fetchCartItems} setUser={setUser} isLoading={isLoading} setIsLoading={setIsLoading}/>}/>
           <Route path="/register" element={<Register alertMessage={alertMessage} setUser={setUser} isLoading={isLoading} setIsLoading={setIsLoading}/>}/>
       </Routes>
       <Footer/>

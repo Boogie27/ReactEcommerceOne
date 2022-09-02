@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 
 
 
-const MiniNavigation = ({user, modalToggle}) => {
+const MiniNavigation = ({user, wishlist,modalToggle}) => {
     return (
         <div className="mini-navi-container">
             <div className="inner-mini-nav">
@@ -12,7 +12,11 @@ const MiniNavigation = ({user, modalToggle}) => {
                     <ul>
                         <li><NavLink to="/">HOME</NavLink></li>
                         <li><NavLink to="/products">PRODUCTS</NavLink></li>
-                        <li><NavLink to="/wishlist">WISHLIST</NavLink></li>
+                        <li className="wishlist-button">
+                            <NavLink to="/wishlist">WISHLIST
+                            { wishlist && wishlist.length > 0 ? (<span className="badge bg-danger">{wishlist.length}</span>) : '' }
+                            </NavLink>
+                        </li>
                         <li><NavLink to="/contact">CONTACT</NavLink></li>
                         { user ? (
                             <li onClick={(e) => modalToggle(true, e)}>LOGOUT</li>

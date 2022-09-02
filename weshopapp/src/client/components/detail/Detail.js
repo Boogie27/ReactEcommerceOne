@@ -304,8 +304,8 @@ const Detail = ({user, addToCart, alertError, alertMessage, addToWishlist}) => {
     // add product to wishslist
     const addItemToWishlist = () => {
         const item = {
+            user_id: user._id,
             product_id: productDetail._id,
-            price: productDetail.price,
             old_url: current_url,
         }
         addToWishlist(item)

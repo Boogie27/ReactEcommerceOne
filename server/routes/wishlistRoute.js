@@ -1,7 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const { 
-    addToWishlist
+    addToWishlist,
+    fetchWishlist
 } = require('../controllers/wishListController')
 
 
@@ -13,7 +14,7 @@ const {
 
 
 router.post('/api/add-to-wishlist', addToWishlist)
-
+router.get('/api/fetch-wishlist-items/:token', fetchWishlist)
 
 
 
