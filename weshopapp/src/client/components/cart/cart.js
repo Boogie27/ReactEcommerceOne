@@ -130,7 +130,7 @@ const Cart = ({user, cart, setCart, addToCart, notify_success, notify_error}) =>
         <>
          {isLoading.loading ? (
             <>
-                <EmptyCart/>
+                {  cart.length == 0 ? (<EmptyCart/>) : '' }
                 <Preloader text={isLoading.text}/>
             </>
             ) : (
