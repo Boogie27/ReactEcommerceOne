@@ -1,7 +1,6 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const app = express()
-const PORT = 3001
 const cors = require('cors')
 const cookieParser = require('cookie-parser');
 const USER_MODEL = require('./models/users')
@@ -16,6 +15,7 @@ const wishlistRoute = require('./routes/wishlistRoute')
 
 
 require('dotenv').config()
+const PORT = process.env.PORT || 3001
 
 
 app.use(express.json())

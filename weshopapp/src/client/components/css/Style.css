@@ -66,7 +66,7 @@ a{
     background-color: #fff;
 }
 .parent-container.active{
-    background-color: #333;
+    background-color: black;
 }
 
 /* **************** MODAL DROP DOWN **************** */
@@ -414,11 +414,10 @@ a{
     }
 }
 /*  ***************** DARK NAVIGATION ************** */
-.nav-container.active{
-    background-color: #333;
+.parent-container.active .nav-container{
     border-bottom: 1px solid rgb(105, 105, 105);
 }
-.search-container.active button{
+.parent-container.active .search-container button{
     color: #fff;
     background-color: rgb(105, 105, 105);
 }
@@ -487,7 +486,7 @@ a{
 }
 /* ************ DARK MINI NAVIGATION *********** */
 .mini-navi-container.active{
-    background-color: #333;
+    background-color: black;
 }
 /* *************** SIDE NAVIGATION ************** */
 .side-nav-container{
@@ -618,7 +617,7 @@ a{
 }
 /* ************ DARK SIDE NAVIGATION ************* */
 .side-nav-container .side-navi.active{
-    background-color: rgb(32, 32, 32);
+    background-color: black;
 }
 .side-nav-container .side-navi.active .nav-title-header{
     border-bottom: 1px solid rgb(80, 80, 80);
@@ -647,8 +646,8 @@ a{
     padding: 40px 0px;
     background-color: #fff;
 }
-.banner-container.active{
-    background-color: #333;
+.parent-container.active .banner-container{
+    background-color: black;
 }
 .inner-banner{
     width: 90%;
@@ -743,7 +742,7 @@ a{
     background-color: #fff;
 }
 .parent-container.active .homebody-container{
-    background-color: #333;
+    background-color: black;
 }
 .home-body{
     width: 90%;
@@ -838,11 +837,18 @@ a{
     padding-top: 20px;
     background-color: #fff;
 }
+.parent-container.active .sideproduct-body{
+    background-color: black;
+}
 .sideproduct-item{
     display: flex;
     padding-top: 20px;
     align-items: center;
     border-bottom: 1px solid rgb(236, 236, 236);
+}
+.parent-container.active .sideproduct-item, 
+.parent-container.active .sideproduct-container{
+    background-color: black;
 }
 .sideproduct-body .sideproduct-img {
     width: 40%;
@@ -1573,7 +1579,8 @@ a{
     border-top: 1px solid rgb(228, 228, 228);
 }
 .parent-container.active .footer-conatiner{
-   background-color: rgb(37, 37, 37);
+   background-color: rgb(14, 14, 14);
+   border-top: 1px solid rgb(65, 65, 65);
 }
 .inner-footer{
     width: 90%;
@@ -1634,8 +1641,8 @@ a{
     border-top: 1px solid rgb(236, 236, 236);
 }
 .parent-container.active .bottom-footer{
-    background-color: rgb(32, 32, 32);
-    border-top: 1px solid rgb(99, 99, 99);
+    background-color: rgb(14, 14, 14);
+    border-top: 1px solid rgb(65, 65, 65);
 }
 @media only screen and (max-width: 567px){
     .subscription-bar{
